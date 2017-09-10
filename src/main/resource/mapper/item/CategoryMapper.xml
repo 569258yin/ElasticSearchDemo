@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="es.dao.CategoryDAO">
+    <resultMap id="categoryResult" type="es.item.bean.Category">
+        <id column="id" property="id" jdbcType="VARBINARY" typeHandler="es.item.bean.typehandler.UUIDTypeHandler"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="tenant_id" property="tenantId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="createCategory">
+        insert into item_category (id, name, parent_id, tenant_id)
+        VALUES (
+        UNHEX(REPLACE(#{category.id},'-','')),
+        #{category.name},
+        #{category.parentId},
+        #{category.tenantId}
+        )
+    </insert>
+
+    <insert id="createCategories">
+        insert into item_category (id, name, parent_id, tenant_id)
+        VALUES
+        <foreach collection="categories" item="category" separator=",">
+        (
+        UNHEX(REPLACE(#{category.id},'-','')),
+        #{category.name},
+        #{category.parentId},
+        #{category.tenantId}
+        )
+        </foreach>
+    </insert>
+
+    <select id="getCategoriesByTenantId" resultMap="categoryResult">
+        select id, name, parent_id, tenant_id
+        from item_category
+        where tenant_id = #{tenantId}
+        <if test="withDeleted == false">
+            and is_deleted = 0
+        </if>
+    </select>
+
+    <select id="getCategoryById" resultMap="categoryResult">
+        select id, name, parent_id, tenant_id
+        from item_category
+        where id = UNHEX(REPLACE(#{id},'-',''))
+    </select>
+
+    <update id="updateCategory">
+        update item_category
+        <set>
+            <if test="category.parentId != null">parent_id = #{category.parentId},</if>
+            name = #{category.name}
+        </set>
+        where id =  UNHEX(REPLACE(#{category.id},'-',''))
+    </update>
+
+    <update id="deleteCategory">
+        update item_category SET
+        is_deleted = 1
+        where id =  UNHEX(REPLACE(#{id},'-',''))
+    </update>
+
+    <select id="getAllCategories" resultMap="categoryResult">
+        select id, name, parent_id, tenant_id
+        from item_category;
+    </select>
+
+</mapper>

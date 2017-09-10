@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="es.dao.ItemDAO">
+    <resultMap id="BaseResultMap" type="es.item.bean.Item">
+        <id column="id" property="id" jdbcType="VARBINARY" typeHandler="es.item.bean.typehandler.UUIDTypeHandler"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" typeHandler="es.item.bean.typehandler.ItemTypeHandler"/>
+        <result column="unit" property="unit" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="cost" property="cost" jdbcType="DECIMAL"/>
+        <result column="tax_rate" property="taxRate" jdbcType="DECIMAL"/>
+        <result column="image" property="image" jdbcType="VARCHAR"/>
+        <result column="album" property="album" jdbcType="VARCHAR"/>
+        <result column="attachment" property="attachment" jdbcType="VARCHAR"/>
+        <result column="blueprint" property="blueprint" jdbcType="VARCHAR"/>
+        <result column="comments" property="comments" jdbcType="VARCHAR"/>
+        <result column="GDID" property="GDID" jdbcType="VARCHAR"/>
+        <result column="tenant_id" property="tenantId" jdbcType="VARCHAR"/>
+        <result column="sort_idx" property="sortIdx" jdbcType="NUMERIC"/>
+        <result column="allow_sale" property="allowSale" jdbcType="TINYINT"/>
+        <result column="allow_purchase" property="allowPurchase" jdbcType="TINYINT"/>
+        <result column="allow_production" property="allowProduction" jdbcType="TINYINT"/>
+        <result column="shelf_life" property="shelfLife" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <association property="category" resultMap="categoryResult"/>
+        <collection property="itemAttributes" resultMap="customerAttrResult"/>
+    </resultMap>
+    <resultMap id="customerAttrResult" type="es.item.bean.ItemAttribute">
+        <id column="attribute_id"/>
+        <result column="attribute_name" property="name" jdbcType="VARCHAR"/>
+        <result column="attribute_value" property="value" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="categoryResult" type="es.item.bean.Category">
+        <id column="category_id" property="id" jdbcType="VARBINARY" typeHandler="es.item.bean.typehandler.UUIDTypeHandler"/>
+        <result column="category_name" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="item_field">
+        id, name, type, category, unit, price, cost, tax_rate, gdid, code, image, album, attachment, blueprint,
+        comments, tenant_id, sort_idx, allow_sale, allow_purchase, allow_production, shelf_life, is_deleted, create_time, update_time
+    </sql>
+
+    <insert id="createItems">
+        INSERT INTO item (id, code, name, type, category, unit, price, cost, tax_rate, image, album, attachment,
+        blueprint, comments, GDID, allow_sale, allow_purchase, allow_production, shelf_life, tenant_id)
+        values
+        <foreach collection="items" item="item" index="index" separator=",">
+            (
+            UNHEX(REPLACE(#{item.id},'-','')),
+            #{item.code},
+            #{item.name},
+            #{item.type.id},
+            UNHEX(REPLACE(#{item.category.id},'-','')),
+            #{item.unit},
+            #{item.price},
+            #{item.cost},
+            #{item.taxRate},
+            #{item.image},
+            #{item.album},
+            #{item.attachment},
+            #{item.blueprint},
+            #{item.comments},
+            #{item.GDID},
+            #{item.allowSale},
+            #{item.allowPurchase},
+            #{item.allowProduction},
+            #{item.shelfLife},
+            #{tenantId}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="createCustomerAttr">
+        INSERT INTO item_attributes ( item_id, name, value, tenant_id)
+        values
+        <foreach collection="itemAttributes" item="item" index="index" separator=",">
+            (
+            UNHEX(REPLACE(#{item.itemId},'-','')),
+            #{item.name},
+            #{item.value},
+            #{tenantId}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getItem" resultMap="BaseResultMap">
+        select a.id, a.code,a.name, a.type, a.unit, a.price, a.cost, a.tax_rate, a.sort_idx,
+        a.image, a.album, a.attachment, a.blueprint, a.comments, a.GDID, a.tenant_id,
+        a.allow_sale, a.allow_purchase, a.allow_production, a.shelf_life,
+        a.id item_id,c.name attribute_name, c.value attribute_value,
+        d.id category_id, d.name category_name
+        from (select
+        <include refid="item_field"/>
+        from item where id = UNHEX(REPLACE(#{itemId},'-','')) and tenant_id = #{tenantId}
+        <if test="withDeleted == false">
+            and is_deleted = 0
+        </if>) a
+        left join item_attributes c on a.id = c.item_id
+        left join item_category d on a.category = d.id and d.is_deleted = 0
+    </select>
+
+    <select id="getAllNotDeleteItems" resultMap="BaseResultMap">
+        select a.id, a.code,a.name, a.type, a.unit, a.price, a.cost, a.tax_rate, a.sort_idx,
+        a.image, a.album, a.attachment, a.blueprint, a.comments, a.GDID, a.tenant_id,
+        a.allow_sale, a.allow_purchase, a.allow_production, a.shelf_life,
+        a.id item_id,c.name attribute_name, c.value attribute_value,
+        d.id category_id, d.name category_name
+        from (select
+        <include refid="item_field"/>
+        from item where is_deleted = 0 and tenant_id = #{tenantId}) a
+        left join item_attributes c on a.id = c.item_id
+        left join item_category d on a.category = d.id and d.is_deleted = 0
+    </select>
+
+    <select id="getItemsByIds" resultMap="BaseResultMap">
+        select a.id, a.code,a.name, a.type, a.unit, a.price, a.cost, a.tax_rate, a.sort_idx ,
+        a.image, a.album, a.attachment, a.blueprint, a.comments, a.GDID, a.tenant_id,
+        a.id item_id,c.name attribute_name, c.value attribute_value,
+        a.allow_sale, a.allow_purchase, a.allow_production, a.shelf_life,
+        d.id category_id, d.name category_name, c.attribute_id
+        from (select
+        <include refid="item_field"/>
+        from item
+        where id in
+        <foreach collection="itemIds" index="index" item="item" separator="," open="(" close=")">
+            UNHEX(REPLACE(#{item},'-',''))
+        </foreach>
+        <if test="withDeleted == false">
+            and is_deleted = 0
+        </if>) a
+        left join item_attributes c on a.id = c.item_id
+        left join item_category d on a.category = d.id and d.is_deleted = 0
+    </select>
+
+    <select id="getItemsByCodes" resultMap="BaseResultMap">
+        select a.id, a.code,a.name, a.type, a.unit, a.price, a.cost, a.tax_rate, a.sort_idx ,
+        a.image, a.album, a.attachment, a.blueprint, a.comments, a.GDID, a.tenant_id,
+        a.id item_id,c.name attribute_name, c.value attribute_value,
+        a.allow_sale, a.allow_purchase, a.allow_production, a.shelf_life,
+        d.id category_id, d.name category_name, c.attribute_id
+        from (select
+        <include refid="item_field"/>
+        from item
+        where tenant_id = #{tenantId} and code in
+        <foreach collection="codes" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        <if test="withDeleted == false">
+            and is_deleted = 0
+        </if>) a
+        left join item_attributes c on a.id = c.item_id
+        left join item_category d on a.category = d.id and d.is_deleted = 0
+    </select>
+
+
+    <select id="getItemsByTenantId" resultMap="BaseResultMap">
+        select a.id, a.code,a.name, a.type, a.unit, a.price, a.cost, a.tax_rate,
+        a.image, a.album, a.attachment, a.blueprint, a.comments, a.GDID, a.tenant_id,a.sort_idx, a.create_time,
+        a.allow_sale, a.allow_purchase, a.allow_production, a.shelf_life,
+        a.id item_id,c.name attribute_name, c.value attribute_value,
+        d.id category_id, d.name category_name
+        from (select
+        <include refid="item_field"/>
+        from item
+        where tenant_id = #{tenantId}
+        <if test="withDeleted == false">
+            and is_deleted = 0
+        </if>
+        <if test="withDeleted == true">
+            and is_deleted = 1
+        </if>) a
+        left join item_attributes c on a.id = c.item_id
+        left join item_category d on a.category = d.id and d.is_deleted = 0
+    </select>
+
+    <update id="updateItem">
+        UPDATE item SET
+        name = #{item.name},
+        category = #{item.category.id},
+        unit = #{item.unit},
+        price = #{item.price},
+        cost = #{item.cost},
+        tax_rate = #{item.taxRate},
+        comments = #{item.comments},
+        code = #{item.code},
+        image = #{item.image},
+        allow_sale = #{item.allowSalce},
+        allow_purchase = #{item.allowPurchase},
+        allow_production = #{item.allowProduction},
+        shelf_life = #{item.shelfLife}
+        where id = UNHEX(REPLACE(#{item.id},'-',''))
+    </update>
+
+    <update id="updateItems" parameterType="list">
+        UPDATE item
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="name = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.name}
+                </foreach>
+            </trim>
+            <trim prefix="category = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then UNHEX(REPLACE(#{item.category.id},'-',''))
+                </foreach>
+            </trim>
+            <trim prefix="unit = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.unit}
+                </foreach>
+            </trim>
+            <trim prefix="price = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.price}
+                </foreach>
+            </trim>
+            <trim prefix="cost = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.cost}
+                </foreach>
+            </trim>
+            <trim prefix="tax_rate = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.taxRate}
+                </foreach>
+            </trim>
+            <trim prefix="comments = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.comments}
+                </foreach>
+            </trim>
+            <trim prefix="code = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.code}
+                </foreach>
+            </trim>
+            <trim prefix="image = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.image}
+                </foreach>
+            </trim>
+            <trim prefix="allow_sale = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.allowSale}
+                </foreach>
+            </trim>
+            <trim prefix="allow_purchase = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.allowPurchase}
+                </foreach>
+            </trim>
+            <trim prefix="allow_production = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.allowProduction}
+                </foreach>
+            </trim>
+            <trim prefix="shelf_life = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.shelfLife}
+                </foreach>
+            </trim>
+            <trim prefix="album = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.album}
+                </foreach>
+            </trim>
+            <trim prefix="blueprint = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.blueprint}
+                </foreach>
+            </trim>
+            <trim prefix="attachment = case" suffix="end,">
+                <foreach collection="items" item="item" index="index">
+                    when id = UNHEX(REPLACE(#{item.id},'-','')) then #{item.attachment}
+                </foreach>
+            </trim>
+        </trim>
+        where
+        <foreach collection="items" index="index" item="item" separator="or" >
+            id  = UNHEX(REPLACE(#{item.id},'-',''))
+        </foreach>
+    </update>
+
+    <update id="updateCustomerAttr">
+        INSERT INTO item_attributes ( item_id, name, value, tenant_id)
+        values
+        <foreach collection="customerAttr" item="item" index="index" separator=",">
+            (
+            UNHEX(REPLACE(#{item.itemId},'-','')),
+            #{item.name},
+            #{item.value},
+            #{tenantId}
+            )
+        </foreach>
+        on duplicate key update value = values(value)
+    </update>
+
+    <delete id="deleteItemAttributes" statementType="PREPARED" timeout="20">
+        delete from item_attributes
+        where
+        <foreach collection="items" index="index" item="item" separator="or" >
+            item_id = UNHEX(REPLACE(#{item.id},'-',''))
+        </foreach>
+    </delete>
+
+    <update id="deleteItem">
+        update item set is_deleted = 1 where id = UNHEX(REPLACE(#{itemId},'-',''))
+    </update>
+
+    <update id="deleteItems">
+        update item set is_deleted = 1 where id in
+        <foreach collection="itemIds" index="index" item="item" separator="," open="(" close=")">
+            UNHEX(REPLACE(#{item},'-',''))
+        </foreach>
+    </update>
+
+    <select id="getItemByCategoryId" resultType="String">
+        select name from item where category = UNHEX(REPLACE(#{category},'-','')) and is_deleted = 0;
+    </select>
+
+    <select id="selectOrderSnapshots" resultType="map">
+        select id, item_json from order_product;
+    </select>
+
+    <select id="selectPurchaseSnapshots" resultType="map">
+        select id,item_json from procurement_order_product;
+    </select>
+
+    <select id="selectVoucherSnapshots"  resultType="map">
+        select id, item_json from voucher_record;
+    </select>
+</mapper>

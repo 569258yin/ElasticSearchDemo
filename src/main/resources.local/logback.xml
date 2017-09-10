@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <!--<property name="LOG_HOME" value="/home/newcoretech/www/coreplus-workflow/logs" />-->
+    <!-- 设定一个输出类型 -->
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender"> 
+        <encoder charset="UTF-8">
+            <pattern>[%-5level %d{MM-dd HH:mm:ss} %c] - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="loginStatistics" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoding>UTF-8</encoding>
+        <File>${catalina.base}/logs/login_statistics.log</File>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss} %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${catalina.base}/logs/login_statistics.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="dataLog.loginStatistics" level="INFO" additivity="false">
+        <appender-ref ref="loginStatistics"/>
+    </logger>
+
+    <!-- 使用DEBUG级别的日志输出 -->
+    <root level="INFO">
+        <appender-ref ref="stdout"/>
+    </root>
+
+
+</configuration>

@@ -1,7 +1,7 @@
 package dao;
 
 import es.dao.ItemDAO;
-import es.elasticsearch.EsJsonUtils;
+import es.utils.EsJsonUtils;
 import es.item.bean.Item;
 import org.junit.Test;
 import org.junit.runner.RunWith;

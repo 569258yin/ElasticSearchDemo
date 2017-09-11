@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * Created by kevinyin on 2017/9/9.
  */
-public abstract class AbstractElasticSearchDao implements ElasticSearchDao{
+public abstract class AbstractItemElasticSearchDao implements ItemElasticSearchDao {
 
     public static final String GET = "GET";
     public static final String POST = "POST";
@@ -26,7 +26,6 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao{
     public static final String BULK = "_bulk";
 
 
-    public static final String UTF_8 = "utf-8";
 
     protected RestClient restClient(){
         return  RestClient.builder(
@@ -65,21 +64,6 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao{
         return StringUtils.lowerCase(index);
     }
 
-    protected boolean dealResponseResult(HttpEntity httpEntity){
-        if (httpEntity == null) {
-            return false;
-        }
-        try {
-            String result = EntityUtils.toString(httpEntity,UTF_8);
-            if (StringUtils.isEmpty(result)) {
-                return false;
-            }
-            JSONObject jsonObject = new JSONObject(result);
-            String acknow = (String) jsonObject.get("acknowledged");
-            return acknow != null ? acknow.equalsIgnoreCase("true") :false;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+
 
 }

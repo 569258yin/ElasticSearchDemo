@@ -20,6 +20,7 @@
     <context:component-scan base-package="es.redis"/>
     <context:component-scan base-package="es.utils"/>
     <context:component-scan base-package="es.dao"/>
+    <context:component-scan base-package="es.service"/>
     <context:component-scan base-package="es.elasticsearch"/>
     <context:component-scan base-package="es.item.service"/>
     <context:annotation-config/>

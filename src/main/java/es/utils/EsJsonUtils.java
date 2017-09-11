@@ -1,4 +1,4 @@
-package es.elasticsearch;
+package es.utils;
 
 import es.item.bean.Item;
 import es.item.bean.ItemAttribute;
@@ -151,4 +151,50 @@ public class EsJsonUtils {
         }
         return sw.toString();
     }
+
+    public static String generateQueryItemByNameAndValue(String name,String value,boolean isAccurate){
+        StringWriter sw = new StringWriter();
+        JsonFactory jsonFactory = objectMapper.getJsonFactory();
+        JsonGenerator jg = null;
+        try {
+            jg = jsonFactory.createJsonGenerator(sw);
+            jg.writeStartObject();
+            jg.writeFieldName("query");
+            jg.writeStartObject();
+            jg.writeFieldName("bool");
+            jg.writeStartObject();
+            jg.writeFieldName("must");
+            jg.writeStartArray();
+            jg.writeStartObject();
+            jg.writeFieldName("match_phrase");  //,"{\"attribute.name\":\""+name+"\"}"
+            jg.writeStartObject();
+            jg.writeStringField("attribute.name",name);
+            jg.writeEndObject();
+            jg.writeEndObject();
+            jg.writeStartObject();
+            if (isAccurate) {
+                jg.writeFieldName("match_phrase");
+                jg.writeStartObject();
+                jg.writeStringField("attribute.value",value);
+                jg.writeEndObject();
+            } else {
+                jg.writeFieldName("match");  //,"{\"attribute.name\":\""+name+"\"}"
+                jg.writeStartObject();
+                jg.writeStringField("attribute.text",value);
+                jg.writeEndObject();
+            }
+            jg.writeEndObject();
+            jg.writeEndArray();
+            jg.writeEndObject();
+            jg.writeEndObject();
+            jg.writeEndObject();
+        } catch (IOException e) {
+            logger.warn(e.getMessage(), e);
+        } finally {
+            Closer.close(jg);
+        }
+        logger.info("generateQueryItemByNameAndValue:"+sw.toString());
+        return sw.toString();
+    }
+
 }

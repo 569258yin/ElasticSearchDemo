@@ -1,6 +1,6 @@
 package elacticsearch.jsonUtil;
 
-import es.elasticsearch.EsJsonUtils;
+import es.utils.EsJsonUtils;
 import org.junit.Test;
 
 /**

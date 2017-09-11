@@ -1,9 +1,8 @@
 package elacticsearch.impl;
 
 import es.dao.ItemDAO;
-import es.elasticsearch.ElasticSearchDao;
-import es.elasticsearch.EsJsonUtils;
-import es.elasticsearch.impl.ElasticSearchDaoImpl;
+import es.elasticsearch.ItemElasticSearchDao;
+import es.utils.EsJsonUtils;
 import es.item.bean.Item;
 import es.utils.Constants;
 import org.junit.Test;
@@ -17,7 +16,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * ElasticSearchDaoImpl Tester.
+ * ItemElasticSearchDaoImpl Tester.
  *
  * @author YH
  * @version 1.0
@@ -26,11 +25,11 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/applicationContext.xml"})
-public class ElasticSearchDaoImplTest {
+public class ItemElasticSearchDaoImplTest {
 
     public static final String TENANT_ID = "5cab9a0c-b22e-4640-ac7e-7426dd9fea73";
     @Resource
-    private ElasticSearchDao elasticSearchDao;
+    private ItemElasticSearchDao itemElasticSearchDao;
     @Resource
     private ItemDAO itemDAO;
 
@@ -59,7 +58,7 @@ public class ElasticSearchDaoImplTest {
     public void testCreateIndexMapping() throws Exception {
         String json = EsJsonUtils.generateItemMapping();
         System.out.println(json);
-        elasticSearchDao.createIndexMapping(TENANT_ID+Constants.INDEX_SPLIT+ Constants.ITEM,json);
+        itemElasticSearchDao.createIndexMapping(TENANT_ID+Constants.INDEX_SPLIT+ Constants.ITEM,json);
     }
 
     /**
@@ -89,14 +88,14 @@ public class ElasticSearchDaoImplTest {
                 List<Item> listPage = items.subList(0, pointsDataLimit);
                 String json = EsJsonUtils.generateMultiInsertItem(listPage);
                 System.out.println(json);
-                elasticSearchDao.multiDealData(TENANT_ID + Constants.INDEX_SPLIT + Constants.ITEM,Constants.ITEM,json);
+                itemElasticSearchDao.multiDealData(TENANT_ID + Constants.INDEX_SPLIT + Constants.ITEM,Constants.ITEM,json);
                 //剔除
                 items.subList(0, pointsDataLimit).clear();
             }
             if (!items.isEmpty()) {
                 String json = EsJsonUtils.generateMultiInsertItem(items);
                 System.out.println(json);
-                elasticSearchDao.multiDealData(TENANT_ID+ Constants.INDEX_SPLIT + Constants.ITEM,Constants.ITEM,json);
+                itemElasticSearchDao.multiDealData(TENANT_ID+ Constants.INDEX_SPLIT + Constants.ITEM,Constants.ITEM,json);
             }
         }
     }

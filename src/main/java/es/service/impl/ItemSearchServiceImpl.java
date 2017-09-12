@@ -1,73 +1,61 @@
 package es.service.impl;
 
+import es.bean.es.EsSearchRange;
 import es.dao.ItemDAO;
 import es.elasticsearch.ItemElasticSearchDao;
 import es.item.bean.Item;
-import es.searchtask.SearchItemIdTask;
 import es.service.ItemSearchService;
 import es.utils.Constants;
 import es.utils.EsJsonUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.*;
 
 /**
  * Created by kevinyin on 2017/9/11.
  */
 @Service
 public class ItemSearchServiceImpl implements ItemSearchService{
+    private Logger logger = LoggerFactory.getLogger(ItemSearchServiceImpl.class);
+
     @Resource
     private ItemElasticSearchDao itemElasticSearchDao;
     @Resource
     private ItemDAO itemDAO;
 
-    private static String AFTER_INDEX = Constants.INDEX_SPLIT+Constants.ITEM+"/"+Constants.ITEM+"/"+Constants.SEARCH;
-    private final ExecutorService poolThread = Executors.newFixedThreadPool(8);
-
-
-
-    // 1823 ms   不用线程只需要856ms
+    // 1823 ms   不用线程只需要856ms   其中搜索274ms
     @Override
-    public List<Item> searchItemByNameAndValue(String tenantId,String name, String value) {
-        String json = EsJsonUtils.generateQueryItemByNameAndValue(name,value,false);
-        Future<List<String>> future = poolThread.submit(new SearchItemIdTask(itemElasticSearchDao,tenantId,json));
-        List<Item> items = itemDAO.getItemsByTenantId(tenantId,false);
-        if (CollectionUtils.isEmpty(items)){
-            return Collections.EMPTY_LIST;
+    public List<Item> searchItemByNameAndValue(String tenantId, String name, String value, boolean isAccurate, EsSearchRange range) {
+        if (range == null) {
+            range = EsSearchRange.getDefaultRang();
         }
-        Map<String,Item> itemMap = new HashMap<>(items.size());
-        for (Item item : items) {
-            itemMap.put(item.getId(),item);
-        }
-        List<String> ids = null;
-        try {
-            ids = future.get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String json = EsJsonUtils.generateQueryItemByNameAndValue(name,value,isAccurate,range);
+        long startTime = System.currentTimeMillis();
+        List<String> ids = itemElasticSearchDao.search("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
+        logger.info("search By ES use Time :" +(System.currentTimeMillis() - startTime) +"ms");
         if (CollectionUtils.isNotEmpty(ids)) {
-            List<Item> itemList = new ArrayList<>(ids.size());
-            for (String id : ids) {
-                if (itemMap.containsKey(id)) {
-                    itemList.add(itemMap.get(id));
-                }
-            }
-            return itemList;
+            return itemDAO.getItemsByIds(ids,false);
         }
         return Collections.EMPTY_LIST;
     }
 
     @Override
-    public List<Item> searchAllAttibute(String tenantId,String value) {
-        return null;
-    }
-
-    @Override
-    public List<Item> accurateSearchByNameAndValue(String tenantId,String name, String value) {
-        return null;
+    public List<Item> searchAllAttibute(String tenantId,String value,boolean isAccurate, EsSearchRange range) {
+        if (range == null) {
+            range = EsSearchRange.getDefaultRang();
+        }
+        String json = EsJsonUtils.generateQueryAllItemByValue(value,isAccurate,range);
+        long startTime = System.currentTimeMillis();
+        List<String> ids = itemElasticSearchDao.search("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
+        logger.info("search By ES use Time :" +(System.currentTimeMillis() - startTime) +"ms");
+        if (CollectionUtils.isNotEmpty(ids)) {
+            return itemDAO.getItemsByIds(ids,false);
+        }
+        return Collections.EMPTY_LIST;
     }
 
 }

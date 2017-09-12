@@ -1,10 +1,8 @@
 package es.utils;
 
+import es.bean.es.EsSearchRange;
 import es.item.bean.Item;
 import es.item.bean.ItemAttribute;
-import es.utils.Closer;
-import es.utils.Constants;
-import es.utils.JsonUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
@@ -152,13 +150,14 @@ public class EsJsonUtils {
         return sw.toString();
     }
 
-    public static String generateQueryItemByNameAndValue(String name,String value,boolean isAccurate){
+    public static String generateQueryItemByNameAndValue(String name,String value,boolean isAccurate, EsSearchRange range){
         StringWriter sw = new StringWriter();
         JsonFactory jsonFactory = objectMapper.getJsonFactory();
         JsonGenerator jg = null;
         try {
             jg = jsonFactory.createJsonGenerator(sw);
             jg.writeStartObject();
+            generatePageSize(jg,range);
             jg.writeFieldName("query");
             jg.writeStartObject();
             jg.writeFieldName("bool");
@@ -172,17 +171,7 @@ public class EsJsonUtils {
             jg.writeEndObject();
             jg.writeEndObject();
             jg.writeStartObject();
-            if (isAccurate) {
-                jg.writeFieldName("match_phrase");
-                jg.writeStartObject();
-                jg.writeStringField("attribute.value",value);
-                jg.writeEndObject();
-            } else {
-                jg.writeFieldName("match");  //,"{\"attribute.name\":\""+name+"\"}"
-                jg.writeStartObject();
-                jg.writeStringField("attribute.text",value);
-                jg.writeEndObject();
-            }
+            matchValue(jg,value,isAccurate);
             jg.writeEndObject();
             jg.writeEndArray();
             jg.writeEndObject();
@@ -196,5 +185,47 @@ public class EsJsonUtils {
         logger.info("generateQueryItemByNameAndValue:"+sw.toString());
         return sw.toString();
     }
+
+    public static String generateQueryAllItemByValue(String value, boolean isAccurate, EsSearchRange range){
+        StringWriter sw = new StringWriter();
+        JsonFactory jsonFactory = objectMapper.getJsonFactory();
+        JsonGenerator jg = null;
+        try {
+            jg = jsonFactory.createJsonGenerator(sw);
+            jg.writeStartObject();
+            generatePageSize(jg,range);
+            jg.writeFieldName("query");
+            jg.writeStartObject();
+            matchValue(jg,value,isAccurate);
+            jg.writeEndObject();
+            jg.writeEndObject();
+        } catch (IOException e) {
+            logger.warn(e.getMessage(), e);
+        } finally {
+            Closer.close(jg);
+        }
+        logger.info("generateQueryItemByNameAndValue:"+sw.toString());
+        return sw.toString();
+    }
+
+    private static void matchValue(JsonGenerator jg,String value,boolean isAccurate) throws IOException {
+        if (isAccurate) {
+            jg.writeFieldName("match_phrase");
+            jg.writeStartObject();
+            jg.writeStringField("attribute.value",value);
+            jg.writeEndObject();
+        } else {
+            jg.writeFieldName("match");
+            jg.writeStartObject();
+            jg.writeStringField("attribute.text",value);
+            jg.writeEndObject();
+        }
+    }
+
+    private static void generatePageSize(JsonGenerator jg, EsSearchRange range) throws IOException {
+        jg.writeNumberField("from",range.getFrom());
+        jg.writeNumberField("size",range.getSize());
+    }
+
 
 }

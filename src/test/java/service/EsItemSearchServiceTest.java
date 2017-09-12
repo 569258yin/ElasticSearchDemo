@@ -1,5 +1,6 @@
 package service;
 
+import es.bean.es.EsSearchRange;
 import es.item.bean.Item;
 import es.service.ItemSearchService;
 import org.junit.Test;
@@ -26,7 +27,17 @@ public class EsItemSearchServiceTest {
     @Test
     public void testSearchNameAndValue(){
         long startTime = System.currentTimeMillis();
-        List<Item> items = itemSearchService.searchItemByNameAndValue(tenantId,"型号","20");
+        EsSearchRange searchRange = EsSearchRange.factoryPageSize(0,10000);
+        List<Item> items = itemSearchService.searchItemByNameAndValue(tenantId,"型号","20",false,searchRange);
+        System.out.println(items.size());
+        System.out.println("use Time : "+(System.currentTimeMillis() - startTime)+"ms" );
+    }
+
+    @Test
+    public void testSearchAllAttibute(){
+        long startTime = System.currentTimeMillis();
+        EsSearchRange searchRange = EsSearchRange.factoryPageSize(0,10000);
+        List<Item> items = itemSearchService.searchAllAttibute(tenantId,"pcbn",false,searchRange);
         System.out.println(items.size());
         System.out.println("use Time : "+(System.currentTimeMillis() - startTime)+"ms" );
     }

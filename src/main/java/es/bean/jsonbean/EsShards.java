@@ -1,4 +1,4 @@
-package es.jsonbean;
+package es.bean.jsonbean;
 
 /**
  * Created by kevinyin on 2017/9/11.

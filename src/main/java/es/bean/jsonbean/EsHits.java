@@ -1,4 +1,4 @@
-package es.jsonbean;
+package es.bean.jsonbean;
 
 import java.util.List;
 

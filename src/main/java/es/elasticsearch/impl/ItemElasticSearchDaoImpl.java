@@ -101,14 +101,14 @@ public class ItemElasticSearchDaoImpl extends AbstractItemElasticSearchDao {
     }
 
     @Override
-    public List<String> searchByNameAndValue(String endpoint, String json) {
+    public List<String> search(String endpoint, String json) {
         RestClient restClient = null;
         try {
             restClient = restClient();
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
             Response response = restClient.performRequest(GET,endpoint, Collections.emptyMap(),entity);
             String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
-            logger.info("multiDealData  result: "+result);
+            logger.info("search at ES result: "+result);
             return EsDealResultUtils.dealSearchItemResult(result);
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,11 +117,6 @@ public class ItemElasticSearchDaoImpl extends AbstractItemElasticSearchDao {
                 closeClient(restClient);
             }
         }
-        return null;
-    }
-
-    @Override
-    public List<String> searchAllByValue(String endpoint, String value) {
         return null;
     }
 }

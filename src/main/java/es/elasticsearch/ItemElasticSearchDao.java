@@ -19,8 +19,6 @@ public interface ItemElasticSearchDao {
 
     boolean createNgramAyanalzer(String index);
 
-    List<String> searchByNameAndValue(String endpoint,String json);
-
-    List<String> searchAllByValue(String endpoint,String value);
+    List<String> search(String endpoint, String json);
 
 }

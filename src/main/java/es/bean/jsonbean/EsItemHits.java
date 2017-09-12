@@ -1,6 +1,4 @@
-package es.jsonbean;
-
-import java.util.List;
+package es.bean.jsonbean;
 
 /**
  * Created by kevinyin on 2017/9/11.

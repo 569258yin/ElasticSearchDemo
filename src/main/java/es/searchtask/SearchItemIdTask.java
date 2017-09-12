@@ -23,6 +23,6 @@ public class SearchItemIdTask implements Callable<List<String>>{
 
     @Override
     public List<String> call() throws Exception {
-        return itemElasticSearchDao.searchByNameAndValue("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
+        return itemElasticSearchDao.search("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
     }
 }

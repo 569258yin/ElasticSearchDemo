@@ -1,16 +1,11 @@
 package es.utils;
 
-import es.item.bean.Item;
-import es.jsonbean.EsItem;
-import es.jsonbean.EsItemAttribute;
-import es.jsonbean.EsItemHits;
-import es.jsonbean.EsSearchResult;
-import org.apache.commons.collections.CollectionUtils;
+import es.bean.jsonbean.EsItemHits;
+import es.bean.jsonbean.EsSearchResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

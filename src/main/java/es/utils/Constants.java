@@ -17,6 +17,9 @@ public class Constants {
 
     public static final String UTF_8 = "utf-8";
 
+    //=======================================Search Param================================================
+    public static final int DEFAULT_SIZE = 10;
+
 
     //============================================ES==========================================
     public static final String SEARCH = "_search";

@@ -3,13 +3,16 @@ package dao;
 import es.dao.ItemDAO;
 import es.utils.EsJsonUtils;
 import es.item.bean.Item;
+import es.utils.ObjectUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kevinyin on 2017/9/9.
@@ -46,6 +49,18 @@ public class ItemDaoTest {
                 System.out.println(json);
             }
         }
+    }
+
+    @Test
+    public void testItemToMap(){
+        String tenantId = "5cab9a0c-b22e-4640-ac7e-7426dd9fea73";
+        List<Item> items = itemDAO.getAllNotDeleteItems(tenantId);
+        Map<String,Map<String,Object>> itemMaps = new HashMap<>(items.size());
+        for (Item item : items) {
+            Map<String, Object> obj = ObjectUtils.getValueMap(item);
+            itemMaps.put(item.getId(),obj);
+        }
+        System.out.println(itemMaps.size());
     }
 
 }

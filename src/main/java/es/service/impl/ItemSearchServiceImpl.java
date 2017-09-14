@@ -2,7 +2,7 @@ package es.service.impl;
 
 import es.bean.es.EsSearchRange;
 import es.dao.ItemDAO;
-import es.elasticsearch.ItemElasticSearchDao;
+import es.elasticsearch.ElasticSearchDao;
 import es.item.bean.Item;
 import es.service.ItemSearchService;
 import es.utils.Constants;
@@ -23,7 +23,7 @@ public class ItemSearchServiceImpl implements ItemSearchService{
     private Logger logger = LoggerFactory.getLogger(ItemSearchServiceImpl.class);
 
     @Resource
-    private ItemElasticSearchDao itemElasticSearchDao;
+    private ElasticSearchDao elasticSearchDao;
     @Resource
     private ItemDAO itemDAO;
 
@@ -35,7 +35,7 @@ public class ItemSearchServiceImpl implements ItemSearchService{
         }
         String json = EsJsonUtils.generateQueryItemByNameAndValue(name,value,isAccurate,range);
         long startTime = System.currentTimeMillis();
-        List<String> ids = itemElasticSearchDao.search("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
+        List<String> ids = elasticSearchDao.search("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
         logger.info("search By ES use Time :" +(System.currentTimeMillis() - startTime) +"ms");
         if (CollectionUtils.isNotEmpty(ids)) {
             return itemDAO.getItemsByIds(ids,false);
@@ -50,7 +50,7 @@ public class ItemSearchServiceImpl implements ItemSearchService{
         }
         String json = EsJsonUtils.generateQueryAllItemByValue(value,isAccurate,range);
         long startTime = System.currentTimeMillis();
-        List<String> ids = itemElasticSearchDao.search("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
+        List<String> ids = elasticSearchDao.search("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
         logger.info("search By ES use Time :" +(System.currentTimeMillis() - startTime) +"ms");
         if (CollectionUtils.isNotEmpty(ids)) {
             return itemDAO.getItemsByIds(ids,false);

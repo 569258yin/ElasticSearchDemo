@@ -22,12 +22,11 @@ public class EsDealResultUtils {
     private static final Logger logger = LoggerFactory.getLogger(EsDealResultUtils.class);
     public static ObjectMapper objectMapper = new ObjectMapper();
 
-    public static boolean dealResponseResult(HttpEntity httpEntity){
-        if (httpEntity == null) {
+    public static boolean dealResponseResult(String result){
+        if (result == null) {
             return false;
         }
         try {
-            String result = EntityUtils.toString(httpEntity,Constants.UTF_8);
             if (StringUtils.isEmpty(result)) {
                 return false;
             }

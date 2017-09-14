@@ -1,26 +1,24 @@
 package es.elasticsearch;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
 /**
  * Created by kevinyin on 2017/9/9.
  */
-public abstract class AbstractItemElasticSearchDao implements ItemElasticSearchDao {
+public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
 
     public static final String GET = "GET";
     public static final String POST = "POST";
     public static final String PUT = "PUT";
+    public static final String DELETE = "DELETE";
 
     public static final String MAPPING = "_mapping";
     public static final String BULK = "_bulk";

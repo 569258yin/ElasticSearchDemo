@@ -1,12 +1,18 @@
 package es.item.bean;
 
+import es.utils.EsJsonUtils;
+import es.utils.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 public class Item implements Serializable {
 
@@ -40,6 +46,27 @@ public class Item implements Serializable {
 
     public Item() {
 
+    }
+
+    public static void generateItemJson(JsonGenerator jg,Item item) throws IOException {
+        Map<String,Object> filedMaps = ObjectUtils.getValueMap(item);
+        String key;
+        Object obj;
+        for (Map.Entry<String, Object> entry: filedMaps.entrySet()){
+            key = entry.getKey();
+            obj = entry.getValue();
+            if (obj instanceof ItemType) {
+                ItemType itemType = (ItemType) obj;
+                EsJsonUtils.generateEsAttribute(jg,key,itemType.getDesc().toString());
+            } else if (obj instanceof Category) {
+                Category category = (Category) obj;
+                EsJsonUtils.generateEsAttribute(jg,key,category.getName().toString());
+            } else if (obj instanceof List){
+                continue;
+            } else {
+                EsJsonUtils.generateEsAttribute(jg,key,obj.toString());
+            }
+        }
     }
 
     public Item(String id) {

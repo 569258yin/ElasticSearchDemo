@@ -63,4 +63,12 @@ public class ItemDaoTest {
         System.out.println(itemMaps.size());
     }
 
+    @Test
+    public void testGenerateItemJson(){
+        String tenantId = "5cab9a0c-b22e-4640-ac7e-7426dd9fea73";
+        List<Item> items = itemDAO.getAllNotDeleteItems(tenantId);
+       String json =EsJsonUtils.generateMultiInsertItem(items.subList(0,20));
+        System.out.println(json);
+    }
+
 }

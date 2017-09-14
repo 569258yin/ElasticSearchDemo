@@ -34,48 +34,48 @@ public class EsJsonUtils {
 //        objectMapper.configure(JsonParser.Feature.CANONICALIZE_FIELD_NAMES, true);
     }
 
-    public static String generateItemMapping(){
+    public static String generateItemMapping() {
         StringBuffer sw = new StringBuffer();
         try {
-           sw.append("{");
-           sw.append(generateNgramAynalyz());
-           sw.append(",");
-           sw.append("\"mappings\":{");
-                sw.append("\""+ Constants.ITEM+"\":{");
-                    sw.append("\"properties\":{");
-                        sw.append("\"id\":{");
-                            sw.append("\"type\":\"keyword\",\"index\":\"not_analyzed\"");
-                        sw.append("},");
-                        sw.append("\"attribute\":{");
-                            sw.append("\"properties\":{");
-                                sw.append("\"name\":{");
-                                    sw.append("\"type\":\"keyword\",\"index\":\"not_analyzed\"");
-                                sw.append("},");
-                                sw.append("\"value\":{");
-                                    sw.append("\"type\":\"keyword\",\"index\":\"not_analyzed\"");
-                                sw.append("},");
-                                sw.append("\"textValue\":{");
-                                    sw.append("\"type\":\"text\",\"analyzer\":\""+NGRAM_ANAYZER+"\"");
-                                sw.append("}");
-                            sw.append("}");
-                    sw.append("}");
-                sw.append("}");
-           sw.append("}");
-           sw.append("}");
-           sw.append("}");
+            sw.append("{");
+            sw.append(generateNgramAynalyz());
+            sw.append(",");
+            sw.append("\"mappings\":{");
+            sw.append("\"" + Constants.ITEM + "\":{");
+            sw.append("\"properties\":{");
+            sw.append("\"id\":{");
+            sw.append("\"type\":\"keyword\",\"index\":\"not_analyzed\"");
+            sw.append("},");
+            sw.append("\"attribute\":{");
+            sw.append("\"properties\":{");
+            sw.append("\"name\":{");
+            sw.append("\"type\":\"keyword\",\"index\":\"not_analyzed\"");
+            sw.append("},");
+            sw.append("\"value\":{");
+            sw.append("\"type\":\"keyword\",\"index\":\"not_analyzed\"");
+            sw.append("},");
+            sw.append("\"textValue\":{");
+            sw.append("\"type\":\"text\",\"analyzer\":\"" + NGRAM_ANAYZER + "\"");
+            sw.append("}");
+            sw.append("}");
+            sw.append("}");
+            sw.append("}");
+            sw.append("}");
+            sw.append("}");
+            sw.append("}");
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
         }
         return sw.toString();
     }
 
-    public static String generateNgramAynalyz(){
+    public static String generateNgramAynalyz() {
         StringBuffer sw = new StringBuffer();
         try {
             sw.append("\"settings\":{");
             sw.append("\"analysis\": {");
             sw.append("\"analyzer\": {");
-            sw.append("\""+NGRAM_ANAYZER+"\": {");
+            sw.append("\"" + NGRAM_ANAYZER + "\": {");
             sw.append("\"tokenizer\": \"my_tokenizer\"");
             sw.append("}");
             sw.append("},");
@@ -94,14 +94,14 @@ public class EsJsonUtils {
         return sw.toString();
     }
 
-    public static String generateMultiInsertItem(List<Item> items){
+    public static String generateMultiInsertItem(List<Item> items) {
         if (CollectionUtils.isEmpty(items)) {
             return "";
         }
         StringBuffer sw = new StringBuffer();
         try {
             for (Item item : items) {
-                sw.append(generateBulkIndex());
+                sw.append(generateBulkIndex(item.getId()));
                 sw.append("\n");
                 sw.append(generateBulkIndexItem(item));
                 sw.append("\n");
@@ -112,11 +112,27 @@ public class EsJsonUtils {
         return sw.toString();
     }
 
-    public final static String generateBulkIndex(){
-        return "{ \"index\": {}}";
+    private final static String generateBulkIndex(String id) throws IOException {
+        StringWriter sw = new StringWriter();
+        JsonFactory jsonFactory = objectMapper.getJsonFactory();
+        JsonGenerator jg = null;
+        try {
+            jg = jsonFactory.createJsonGenerator(sw);
+            jg.writeStartObject();
+            jg.writeFieldName("index");
+            jg.writeStartObject();
+            jg.writeStringField("_id", id);
+            jg.writeEndObject();
+            jg.writeEndObject();
+        } catch (IOException e) {
+            logger.warn(e.getMessage(), e);
+        } finally {
+            Closer.close(jg);
+        }
+        return sw.toString();
     }
 
-    public static String generateBulkIndexItem(Item item){
+    private static String generateBulkIndexItem(Item item) {
         StringWriter sw = new StringWriter();
         JsonFactory jsonFactory = objectMapper.getJsonFactory();
         JsonGenerator jg = null;
@@ -126,20 +142,12 @@ public class EsJsonUtils {
             jg.writeStringField("id", item.getId());
             jg.writeFieldName("attribute");
             jg.writeStartArray();
+            Item.generateItemJson(jg, item);
             if (CollectionUtils.isNotEmpty(item.getItemAttributes())) {
                 for (ItemAttribute attribute : item.getItemAttributes()) {
-                    jg.writeStartObject();
-                    jg.writeStringField("name",attribute.getName());
-                    jg.writeStringField("value",attribute.getValue());
-                    jg.writeStringField("text",attribute.getValue());
-                    jg.writeEndObject();
+                    generateEsAttribute(jg, attribute.getName(), attribute.getValue());
                 }
             }
-            jg.writeStartObject();
-            jg.writeStringField("name",ITEM_NAME);
-            jg.writeStringField("value",item.getName());
-            jg.writeStringField("text",item.getName());
-            jg.writeEndObject();
             jg.writeEndArray();
             jg.writeEndObject();
         } catch (IOException e) {
@@ -150,14 +158,21 @@ public class EsJsonUtils {
         return sw.toString();
     }
 
-    public static String generateQueryItemByNameAndValue(String name,String value,boolean isAccurate, EsSearchRange range){
+    public static void generateEsAttribute(JsonGenerator jg, String name, String value) throws IOException {
+        jg.writeStartObject();
+        jg.writeStringField("name", name);
+        jg.writeStringField("value", value);
+        jg.writeEndObject();
+    }
+
+    public static String generateQueryItemByNameAndValue(String name, String value, boolean isAccurate, EsSearchRange range) {
         StringWriter sw = new StringWriter();
         JsonFactory jsonFactory = objectMapper.getJsonFactory();
         JsonGenerator jg = null;
         try {
             jg = jsonFactory.createJsonGenerator(sw);
             jg.writeStartObject();
-            generatePageSize(jg,range);
+            generatePageSize(jg, range);
             jg.writeFieldName("query");
             jg.writeStartObject();
             jg.writeFieldName("bool");
@@ -167,11 +182,11 @@ public class EsJsonUtils {
             jg.writeStartObject();
             jg.writeFieldName("match_phrase");  //,"{\"attribute.name\":\""+name+"\"}"
             jg.writeStartObject();
-            jg.writeStringField("attribute.name",name);
+            jg.writeStringField("attribute.name", name);
             jg.writeEndObject();
             jg.writeEndObject();
             jg.writeStartObject();
-            matchValue(jg,value,isAccurate);
+            matchValue(jg, value, isAccurate);
             jg.writeEndObject();
             jg.writeEndArray();
             jg.writeEndObject();
@@ -182,21 +197,21 @@ public class EsJsonUtils {
         } finally {
             Closer.close(jg);
         }
-        logger.info("generateQueryItemByNameAndValue:"+sw.toString());
+        logger.info("generateQueryItemByNameAndValue:" + sw.toString());
         return sw.toString();
     }
 
-    public static String generateQueryAllItemByValue(String value, boolean isAccurate, EsSearchRange range){
+    public static String generateQueryAllItemByValue(String value, boolean isAccurate, EsSearchRange range) {
         StringWriter sw = new StringWriter();
         JsonFactory jsonFactory = objectMapper.getJsonFactory();
         JsonGenerator jg = null;
         try {
             jg = jsonFactory.createJsonGenerator(sw);
             jg.writeStartObject();
-            generatePageSize(jg,range);
+            generatePageSize(jg, range);
             jg.writeFieldName("query");
             jg.writeStartObject();
-            matchValue(jg,value,isAccurate);
+            matchValue(jg, value, isAccurate);
             jg.writeEndObject();
             jg.writeEndObject();
         } catch (IOException e) {
@@ -204,27 +219,27 @@ public class EsJsonUtils {
         } finally {
             Closer.close(jg);
         }
-        logger.info("generateQueryItemByNameAndValue:"+sw.toString());
+        logger.info("generateQueryItemByNameAndValue:" + sw.toString());
         return sw.toString();
     }
 
-    private static void matchValue(JsonGenerator jg,String value,boolean isAccurate) throws IOException {
+    private static void matchValue(JsonGenerator jg, String value, boolean isAccurate) throws IOException {
         if (isAccurate) {
             jg.writeFieldName("match_phrase");
             jg.writeStartObject();
-            jg.writeStringField("attribute.value",value);
+            jg.writeStringField("attribute.value", value);
             jg.writeEndObject();
         } else {
             jg.writeFieldName("match");
             jg.writeStartObject();
-            jg.writeStringField("attribute.text",value);
+            jg.writeStringField("attribute.text", value);
             jg.writeEndObject();
         }
     }
 
     private static void generatePageSize(JsonGenerator jg, EsSearchRange range) throws IOException {
-        jg.writeNumberField("from",range.getFrom());
-        jg.writeNumberField("size",range.getSize());
+        jg.writeNumberField("from", range.getFrom());
+        jg.writeNumberField("size", range.getSize());
     }
 
 

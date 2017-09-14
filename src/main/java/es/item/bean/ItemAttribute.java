@@ -1,5 +1,8 @@
 package es.item.bean;
 
+import org.codehaus.jackson.JsonGenerator;
+
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -21,7 +24,6 @@ public class ItemAttribute implements Serializable {
         this.name = name;
         this.value = value;
     }
-
     public String getItemId() {
         return itemId;
     }

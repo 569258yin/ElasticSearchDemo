@@ -27,7 +27,7 @@ import java.util.List;
 @ContextConfiguration(locations = {"classpath:spring/applicationContext.xml"})
 public class ElasticSearchDaoImplTest {
 
-    public static final String TENANT_ID = "5cab9a0c-b22e-4640-ac7e-7426dd9fea73";
+    public static final String TENANT_ID = "ca771880-2cd1-4a5d-a53c-581a4721252e";
     @Resource
     private ElasticSearchDao elasticSearchDao;
     @Resource

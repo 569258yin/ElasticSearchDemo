@@ -162,6 +162,7 @@ public class EsJsonUtils {
         jg.writeStartObject();
         jg.writeStringField("name", name);
         jg.writeStringField("value", value);
+        jg.writeStringField("text", value);
         jg.writeEndObject();
     }
 

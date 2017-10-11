@@ -107,7 +107,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
     }
 
     @Override
-    public int multiDealData(String index, String type, String json) {
+    public boolean multiDealData(String index, String type, String json) {
         RestClient restClient = null;
         try {
             restClient = restClient();
@@ -115,7 +115,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
             Response response = restClient.performRequest(POST,"/"+index+"/" +type +"/"+BULK, Collections.emptyMap(),entity);
             String result = EntityUtils.toString(response.getEntity(),Constants.UTF_8);
             logger.info("multiDealData  result: "+result);
-            return 1;
+            return EsDealResultUtils.dealBulkInsertResult(result);
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
@@ -123,7 +123,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
                 closeClient(restClient);
             }
         }
-        return 0;
+        return false;
     }
 
     @Override

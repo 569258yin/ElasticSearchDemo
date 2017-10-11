@@ -22,13 +22,13 @@ public class EsItemSearchServiceTest {
     @Resource
     private ItemSearchService itemSearchService;
 
-    private String tenantId = "5cab9a0c-b22e-4640-ac7e-7426dd9fea73";
+    private String tenantId = "ca771880-2cd1-4a5d-a53c-581a4721252e";
 
     @Test
     public void testSearchNameAndValue(){
         long startTime = System.currentTimeMillis();
         EsSearchRange searchRange = EsSearchRange.factoryPageSize(0,10000);
-        List<Item> items = itemSearchService.searchItemByNameAndValue(tenantId,"型号","20",false,searchRange);
+        List<Item> items = itemSearchService.searchItemByNameAndValue(tenantId,"name","合金",false,searchRange);
         System.out.println(items.size());
         System.out.println("use Time : "+(System.currentTimeMillis() - startTime)+"ms" );
     }
@@ -37,7 +37,7 @@ public class EsItemSearchServiceTest {
     public void testSearchAllAttibute(){
         long startTime = System.currentTimeMillis();
         EsSearchRange searchRange = EsSearchRange.factoryPageSize(0,10000);
-        List<Item> items = itemSearchService.searchAllAttibute(tenantId,"pcbn",false,searchRange);
+        List<Item> items = itemSearchService.searchAllAttibute(tenantId,"合金",false,searchRange);
         System.out.println(items.size());
         System.out.println("use Time : "+(System.currentTimeMillis() - startTime)+"ms" );
     }

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,5 +62,19 @@ public class EsDealResultUtils {
             logger.error("dealSearchItemResult",e);
             return Collections.EMPTY_LIST;
         }
+    }
+
+    public static boolean dealBulkInsertResult(String json) {
+        if (StringUtils.isEmpty(json)) {
+            return false;
+        }
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            String errors = (String) jsonObject.get("errors");
+            return errors != null ? errors.equalsIgnoreCase("false") :false;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

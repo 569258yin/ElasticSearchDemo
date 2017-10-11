@@ -17,7 +17,7 @@ public interface ElasticSearchDao {
 
     int insertData(String index,String type,String json);
 
-    int multiDealData(String index,String type,String json);
+    boolean multiDealData(String index,String type,String json);
 
     boolean createNgramAyanalzer(String index);
 

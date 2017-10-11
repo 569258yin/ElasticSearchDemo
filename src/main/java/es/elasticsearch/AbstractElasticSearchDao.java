@@ -2,7 +2,11 @@ package es.elasticsearch;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.elasticsearch.client.RestClient;
@@ -26,6 +30,11 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
 
 
     protected RestClient restClient(){
+
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY,
+                new UsernamePasswordCredentials("elastic", "123456"));
+
         return  RestClient.builder(
                 new HttpHost("localhost",9200,"http"),
                 new HttpHost("localhost",9201,"http")
@@ -39,7 +48,7 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
                 //设置IO分发线程数目，参考netty线程模型
                 .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                     public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder) {
-                        return httpAsyncClientBuilder.setDefaultIOReactorConfig(
+                        return httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider).setDefaultIOReactorConfig(
                                 IOReactorConfig.custom().setIoThreadCount(1).build()
                         );
                     }

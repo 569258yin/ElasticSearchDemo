@@ -3,8 +3,6 @@ package es.utils;
 import es.bean.jsonbean.EsItemHits;
 import es.bean.jsonbean.EsSearchResult;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,8 +68,7 @@ public class EsDealResultUtils {
         }
         try {
             JSONObject jsonObject = new JSONObject(json);
-            String errors = (String) jsonObject.get("errors");
-            return errors != null ? errors.equalsIgnoreCase("false") :false;
+            return (Boolean) jsonObject.get("errors");
         } catch (JSONException e) {
             e.printStackTrace();
         }

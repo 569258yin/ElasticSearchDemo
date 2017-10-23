@@ -31,38 +31,4 @@ public interface RedisDao {
     public boolean hSet(final String key, final String field, final Object value);
 
     public void hMSet(final String key, Map<String, Object> maps);
-
-    public String generateDaliyNumber(RedisKeysEnum redisKey, String tenantID);
-
-    String generateAdditionalBillNumber(String billNumber, String tenantID);
-
-    String generateProjectNumber(String tenantId);
-
-    String generateLogisticsStockNumber(String tenantId);
-
-    String generateSalesReturnNumber(String tenantId);
-
-    String generateReceiveNumber(String tenantId);
-
-    public String generateInventoryID(String tenantID);
-
-    public String generatePaymentNumber(String tenantID);
-
-    public String generatePricingPlanNumber(String tenantID);
-
-    String generateOutsourceOrderNumber(String tenantID);
-
-    String generateStockNumber(String tenantID);
-
-    public String generateItemCode(String type, String tenantID);
-
-    public List<String> generateItemCode(String type, int quantity, String tenantID);
-
-    public List<String> generateQRCodeID(int quantity, String tenantID);
-
-    List<String> generateSN(String billNumber, int quantity, String tenantID);
-
-    Map<String, Object> hGetAll(String key);
-
-    Object hGet(String key, String field);
 }

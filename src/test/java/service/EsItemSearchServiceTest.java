@@ -28,7 +28,7 @@ public class EsItemSearchServiceTest {
     public void testSearchNameAndValue(){
         long startTime = System.currentTimeMillis();
         EsSearchRange searchRange = EsSearchRange.factoryPageSize(0,10000);
-        List<Item> items = itemSearchService.searchItemByNameAndValue(tenantId,"name","合金",false,searchRange);
+        List<Item> items = itemSearchService.searchItemByNameAndValue(tenantId,"type","产品",false,searchRange);
         System.out.println(items.size());
         System.out.println("use Time : "+(System.currentTimeMillis() - startTime)+"ms" );
     }

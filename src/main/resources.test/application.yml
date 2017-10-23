@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: coreplus_core
+  session:
+    store-type: redis
+server:
+  session:
+    timeout: 4320
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://115.159.86.163:8761/eureka/

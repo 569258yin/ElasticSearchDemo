@@ -18,6 +18,10 @@ public interface RedisDao {
 
     public long del(final String key);
 
+    Map<String, Object> hGetAll(String key);
+
+    Object hGet(String key, String field);
+
     public long incr(final String key);
 
     public long incrBy(final String key, final long value);

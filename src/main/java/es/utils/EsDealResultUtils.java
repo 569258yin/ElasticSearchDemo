@@ -4,14 +4,13 @@ import es.bean.jsonbean.EsItemHits;
 import es.bean.jsonbean.EsSearchResult;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kevinyin on 2017/9/11.
@@ -29,8 +28,8 @@ public class EsDealResultUtils {
             if (StringUtils.isEmpty(result)) {
                 return false;
             }
-            JSONObject jsonObject = new JSONObject(result);
-            String acknow = (String) jsonObject.get("acknowledged");
+            Map<String,Object> maps = JsonUtils.jsonDecodeMap(result);
+            String acknow = (String) maps.get("acknowledged");
             return acknow != null ? acknow.equalsIgnoreCase("true") :false;
         } catch (Exception e) {
             return false;
@@ -67,9 +66,9 @@ public class EsDealResultUtils {
             return false;
         }
         try {
-            JSONObject jsonObject = new JSONObject(json);
-            return (Boolean) jsonObject.get("errors");
-        } catch (JSONException e) {
+            Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
+            return (Boolean) maps.get("errors");
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;

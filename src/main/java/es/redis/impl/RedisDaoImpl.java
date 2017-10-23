@@ -40,6 +40,7 @@ public class RedisDaoImpl implements RedisDao {
     }
 
 
+    @Override
     public boolean expire(final String key, final long seconds) {
         return redisTemplate.execute(new RedisCallback<Boolean>() {
             @Override
@@ -51,8 +52,9 @@ public class RedisDaoImpl implements RedisDao {
 
     @Override
     public Object get(final String key) {
-        if (StringUtils.isEmpty(key))
+        if (StringUtils.isEmpty(key)) {
             return null;
+        }
         return redisTemplate.execute(new RedisCallback<Object>() {
             @Override
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -115,8 +117,9 @@ public class RedisDaoImpl implements RedisDao {
 
     @Override
     public void hMSet(final String key, final Map<String, Object> maps) {
-        if (StringUtils.isEmpty(key) || MapUtils.isEmpty(maps))
+        if (StringUtils.isEmpty(key) || MapUtils.isEmpty(maps)) {
             return;
+        }
         redisTemplate.execute(new RedisCallback<Object>() {
             @Override
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -142,8 +145,9 @@ public class RedisDaoImpl implements RedisDao {
 
     @Override
     public Map<String, Object> hGetAll(final String key) {
-        if (StringUtils.isEmpty(key))
+        if (StringUtils.isEmpty(key)) {
             return MapUtils.EMPTY_MAP;
+        }
         return (Map<String, Object>) redisTemplate.execute(new RedisCallback<Object>() {
             @Override
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -165,8 +169,9 @@ public class RedisDaoImpl implements RedisDao {
 
     @Override
     public Object hGet(final String key, final String field) {
-        if (StringUtils.isEmpty(key) || StringUtils.isEmpty(field))
+        if (StringUtils.isEmpty(key) || StringUtils.isEmpty(field)) {
             return StringUtils.EMPTY;
+        }
         return redisTemplate.execute(new RedisCallback<Object>() {
             @Override
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -184,8 +189,9 @@ public class RedisDaoImpl implements RedisDao {
 
     @Override
     public long incr(final String key) {
-        if (StringUtils.isEmpty(key))
+        if (StringUtils.isEmpty(key)) {
             return 0;
+        }
         return redisTemplate.execute(new RedisCallback<Long>() {
             @Override
             public Long doInRedis(RedisConnection connection) throws DataAccessException {
@@ -197,8 +203,9 @@ public class RedisDaoImpl implements RedisDao {
 
     @Override
     public long incrBy(final String key, final long value) {
-        if (StringUtils.isEmpty(key))
+        if (StringUtils.isEmpty(key)) {
             return 0;
+        }
         return redisTemplate.execute(new RedisCallback<Long>() {
             @Override
             public Long doInRedis(RedisConnection connection) throws DataAccessException {
@@ -210,8 +217,9 @@ public class RedisDaoImpl implements RedisDao {
     //返回成功删除的个数
     @Override
     public long del(final String key) {
-        if (StringUtils.isEmpty(key))
+        if (StringUtils.isEmpty(key)) {
             return 0;
+        }
         return redisTemplate.execute(new RedisCallback<Long>() {
             @Override
             public Long doInRedis(RedisConnection connection) throws DataAccessException {

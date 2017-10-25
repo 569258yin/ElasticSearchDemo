@@ -11,12 +11,15 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 
 import java.io.IOException;
 
 /**
  * Created by kevinyin on 2017/9/9.
  */
+@PropertySource("classpath:configure.properties")
 public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
 
     public static final String GET = "GET";
@@ -27,7 +30,10 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
     public static final String MAPPING = "_mapping";
     public static final String BULK = "_bulk";
 
-
+    @Value("${elastic_search_host}")
+    private String elasticHost;
+    @Value("${elastic_search_port}")
+    private int elasticPort;
 
     protected RestClient restClient(){
 
@@ -36,8 +42,7 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
                 new UsernamePasswordCredentials("elastic", "123456"));
 
         return  RestClient.builder(
-                new HttpHost("localhost",9200,"http"),
-                new HttpHost("localhost",9201,"http")
+                new HttpHost(elasticHost,elasticPort,"http")
         )
                 .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
                     public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {

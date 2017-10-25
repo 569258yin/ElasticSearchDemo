@@ -1,11 +1,15 @@
 package dao;
 
+import es.ElasticApplication;
 import es.dao.ItemDAO;
+import es.elasticsearch.ElasticSearchDao;
 import es.utils.EsJsonUtils;
-import es.item.bean.Item;
+import es.bean.item.Item;
 import es.utils.ObjectUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -18,7 +22,7 @@ import java.util.Map;
  * Created by kevinyin on 2017/9/9.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/applicationContext.xml"})
+@SpringBootTest(classes = ElasticApplication.class)
 public class ItemDaoTest {
 
 

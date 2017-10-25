@@ -1,14 +1,15 @@
 spring:
   application:
-    name: coreplus_core
-  session:
-    store-type: redis
+    name: elasticSearch
+  datasource:
+    url: jdbc:mysql://localhost:3306/coreplus
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+mybatis:
+  mapper-locations: classpath:mapper/*/*.xml
+  type-aliases-package: es.dao
 server:
-  session:
-    timeout: 4320
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    serviceUrl:
-      defaultZone: http://115.159.86.163:8761/eureka/
+  port: 8081
+
+

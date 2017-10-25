@@ -1,4 +1,4 @@
-package es.item.util;
+package es.utils;
 
 import java.util.UUID;
 

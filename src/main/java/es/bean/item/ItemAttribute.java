@@ -1,4 +1,4 @@
-package es.item.bean;
+package es.bean.item;
 
 import org.codehaus.jackson.JsonGenerator;
 

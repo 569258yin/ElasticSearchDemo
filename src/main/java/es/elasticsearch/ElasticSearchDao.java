@@ -1,7 +1,5 @@
 package es.elasticsearch;
 
-import es.item.bean.Item;
-
 import java.util.List;
 
 /**

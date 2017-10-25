@@ -1,4 +1,4 @@
-package es.item.bean;
+package es.bean.item;
 
 import com.google.common.collect.Maps;
 import org.codehaus.jackson.annotate.JsonCreator;

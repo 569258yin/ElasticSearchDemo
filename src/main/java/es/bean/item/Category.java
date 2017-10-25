@@ -1,6 +1,6 @@
-package es.item.bean;
+package es.bean.item;
 
-import es.item.util.ItemConstants;
+import es.utils.ItemConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;

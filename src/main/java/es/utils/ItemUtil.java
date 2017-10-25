@@ -1,11 +1,9 @@
-package es.item.util;
+package es.utils;
 
 
-import es.item.bean.Category;
-import es.item.bean.Item;
-import es.item.bean.ItemAttribute;
-import es.utils.Closer;
-import es.utils.JsonUtils;
+import es.bean.item.Category;
+import es.bean.item.Item;
+import es.bean.item.ItemAttribute;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;

@@ -1,4 +1,4 @@
-package es.item.bean.enumeration;
+package es.bean.item.enumeration;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,4 +1,4 @@
-package es.item.bean;
+package es.bean.item;
 
 import es.utils.EsJsonUtils;
 import es.utils.ObjectUtils;
@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 public class Item implements Serializable {
 

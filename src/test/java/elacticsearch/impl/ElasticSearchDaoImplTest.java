@@ -3,7 +3,7 @@ package elacticsearch.impl;
 import es.dao.ItemDAO;
 import es.elasticsearch.ElasticSearchDao;
 import es.utils.EsJsonUtils;
-import es.item.bean.Item;
+import es.bean.item.Item;
 import es.utils.Constants;
 import org.junit.Test;
 import org.junit.Before;

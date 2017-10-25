@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="es.dao.ItemDAO">
-    <resultMap id="BaseResultMap" type="es.item.bean.Item">
-        <id column="id" property="id" jdbcType="VARBINARY" typeHandler="es.item.bean.typehandler.UUIDTypeHandler"/>
+    <resultMap id="BaseResultMap" type="es.bean.item.Item">
+        <id column="id" property="id" jdbcType="VARBINARY" typeHandler="es.bean.item.typehandler.UUIDTypeHandler"/>
         <result column="code" property="code" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
-        <result column="type" property="type" typeHandler="es.item.bean.typehandler.ItemTypeHandler"/>
+        <result column="type" property="type" typeHandler="es.bean.item.typehandler.ItemTypeHandler"/>
         <result column="unit" property="unit" jdbcType="VARCHAR"/>
         <result column="price" property="price" jdbcType="DECIMAL"/>
         <result column="cost" property="cost" jdbcType="DECIMAL"/>
@@ -28,13 +28,13 @@
         <association property="category" resultMap="categoryResult"/>
         <collection property="itemAttributes" resultMap="customerAttrResult"/>
     </resultMap>
-    <resultMap id="customerAttrResult" type="es.item.bean.ItemAttribute">
+    <resultMap id="customerAttrResult" type="es.bean.item.ItemAttribute">
         <id column="attribute_id"/>
         <result column="attribute_name" property="name" jdbcType="VARCHAR"/>
         <result column="attribute_value" property="value" jdbcType="VARCHAR"/>
     </resultMap>
-    <resultMap id="categoryResult" type="es.item.bean.Category">
-        <id column="category_id" property="id" jdbcType="VARBINARY" typeHandler="es.item.bean.typehandler.UUIDTypeHandler"/>
+    <resultMap id="categoryResult" type="es.bean.item.Category">
+        <id column="category_id" property="id" jdbcType="VARBINARY" typeHandler="es.bean.item.typehandler.UUIDTypeHandler"/>
         <result column="category_name" property="name" jdbcType="VARCHAR"/>
     </resultMap>
 

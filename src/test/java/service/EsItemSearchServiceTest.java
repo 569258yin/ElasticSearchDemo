@@ -1,7 +1,7 @@
 package service;
 
 import es.bean.es.EsSearchRange;
-import es.item.bean.Item;
+import es.bean.item.Item;
 import es.service.ItemSearchService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

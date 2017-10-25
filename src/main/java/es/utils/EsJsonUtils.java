@@ -1,8 +1,8 @@
 package es.utils;
 
 import es.bean.es.EsSearchRange;
-import es.item.bean.Item;
-import es.item.bean.ItemAttribute;
+import es.bean.item.Item;
+import es.bean.item.ItemAttribute;
 import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;

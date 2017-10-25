@@ -3,7 +3,7 @@ package es.service.impl;
 import es.bean.es.EsSearchRange;
 import es.dao.ItemDAO;
 import es.elasticsearch.ElasticSearchDao;
-import es.item.bean.Item;
+import es.bean.item.Item;
 import es.service.ItemSearchService;
 import es.utils.Constants;
 import es.utils.EsJsonUtils;

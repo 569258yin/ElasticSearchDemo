@@ -1,6 +1,6 @@
-package es.item.bean.typehandler;
+package es.bean.item.typehandler;
 
-import es.item.bean.ItemType;
+import es.bean.item.ItemType;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

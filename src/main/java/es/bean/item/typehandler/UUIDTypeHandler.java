@@ -1,6 +1,6 @@
-package es.item.bean.typehandler;
+package es.bean.item.typehandler;
 
-import es.item.util.HexUtil;
+import es.utils.HexUtil;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

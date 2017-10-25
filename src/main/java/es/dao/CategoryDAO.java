@@ -1,6 +1,6 @@
 package es.dao;
 
-import es.item.bean.Category;
+import es.bean.item.Category;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

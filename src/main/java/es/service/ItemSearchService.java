@@ -1,7 +1,7 @@
 package es.service;
 
 import es.bean.es.EsSearchRange;
-import es.item.bean.Item;
+import es.bean.item.Item;
 
 import java.util.List;
 

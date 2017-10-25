@@ -1,7 +1,7 @@
 package es.dao;
 
-import es.item.bean.Item;
-import es.item.bean.ItemAttribute;
+import es.bean.item.Item;
+import es.bean.item.ItemAttribute;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

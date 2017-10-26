@@ -93,14 +93,14 @@ public class ElasticSearchDaoImplTest {
                 List<Item> listPage = items.subList(0, pointsDataLimit);
                 String json = EsJsonUtils.generateMultiInsertItem(listPage);
                 System.out.println(json);
-                elasticSearchDao.multiDealData(TENANT_ID + Constants.INDEX_SPLIT + Constants.ITEM,Constants.ITEM,json);
+                elasticSearchDao.bulkDealData(TENANT_ID + Constants.INDEX_SPLIT + Constants.ITEM,Constants.ITEM,json);
                 //剔除
                 items.subList(0, pointsDataLimit).clear();
             }
             if (!items.isEmpty()) {
                 String json = EsJsonUtils.generateMultiInsertItem(items);
                 System.out.println(json);
-                elasticSearchDao.multiDealData(TENANT_ID+ Constants.INDEX_SPLIT + Constants.ITEM,Constants.ITEM,json);
+                elasticSearchDao.bulkDealData(TENANT_ID+ Constants.INDEX_SPLIT + Constants.ITEM,Constants.ITEM,json);
             }
         }
     }

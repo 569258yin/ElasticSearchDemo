@@ -45,13 +45,16 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
                 new HttpHost(elasticHost,elasticPort,"http")
         )
                 .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
+                    @Override
                     public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
                         return requestConfigBuilder.setConnectTimeout(5000)
                                 .setSocketTimeout(60000);
                     }
                 })
                 //设置IO分发线程数目，参考netty线程模型
+
                 .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+                    @Override
                     public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder) {
                         return httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider).setDefaultIOReactorConfig(
                                 IOReactorConfig.custom().setIoThreadCount(1).build()

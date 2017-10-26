@@ -25,6 +25,13 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchDaoImpl.class);
 
+    /**
+     * 创建索引和类型
+     * @param index  索引
+     * @param type 类别
+     * @param json
+     * @return
+     */
     @Override
     public boolean createIndexType(String index, String type, String json) {
         RestClient restClient = null;
@@ -45,6 +52,11 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
         return false;
     }
 
+    /**
+     * 删除索引
+     * @param index
+     * @return
+     */
     @Override
     public boolean deleteIndex(String index) {
         RestClient restClient = null;
@@ -64,6 +76,12 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
         return false;
     }
 
+    /**
+     * 根据mapping设置创建索引
+     * @param index
+     * @param json
+     * @return
+     */
     @Override
     public boolean createIndexMapping(String index, String json) {
         RestClient restClient = null;
@@ -85,6 +103,13 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
         return false;
     }
 
+    /**
+     * 单条插入数据
+     * @param index
+     * @param type
+     * @param json
+     * @return
+     */
     @Override
     public int insertData(String index, String type, String json) {
         RestClient restClient = null;
@@ -106,15 +131,22 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
         return 0;
     }
 
+    /**
+     * 批量操作数据
+     * @param index
+     * @param type
+     * @param json
+     * @return
+     */
     @Override
-    public boolean multiDealData(String index, String type, String json) {
+    public boolean bulkDealData(String index, String type, String json) {
         RestClient restClient = null;
         try {
             restClient = restClient();
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
             Response response = restClient.performRequest(POST,"/"+index+"/" +type +"/"+BULK, Collections.emptyMap(),entity);
             String result = EntityUtils.toString(response.getEntity(),Constants.UTF_8);
-            logger.info("multiDealData  result: "+result);
+            logger.info("bulkDealData  result: "+result);
             return EsDealResultUtils.dealBulkInsertResult(result);
         } catch (IOException e) {
             e.printStackTrace();

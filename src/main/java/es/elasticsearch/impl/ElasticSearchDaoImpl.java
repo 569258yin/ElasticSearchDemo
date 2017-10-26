@@ -27,8 +27,9 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
 
     /**
      * 创建索引和类型
-     * @param index  索引
-     * @param type 类别
+     *
+     * @param index 索引
+     * @param type  类别
      * @param json
      * @return
      */
@@ -37,14 +38,14 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
         RestClient restClient = null;
         try {
             restClient = restClient();
-            HttpEntity entity = new NStringEntity(json,ContentType.APPLICATION_JSON);
-            Response response = restClient.performRequest(PUT,"/"+index+"/"+type, Collections.emptyMap(),entity);
-            String result = EntityUtils.toString(response.getEntity(),Constants.UTF_8);
-            logger.info("delete Mapping result: "+result);
+            HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
+            Response response = restClient.performRequest(PUT, "/" + index + "/" + type, Collections.emptyMap(), entity);
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("delete Mapping result: " + result);
             return EsDealResultUtils.dealResponseResult(result);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (restClient != null) {
                 closeClient(restClient);
             }
@@ -54,6 +55,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
 
     /**
      * 删除索引
+     *
      * @param index
      * @return
      */
@@ -62,13 +64,13 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
         RestClient restClient = null;
         try {
             restClient = restClient();
-            Response response = restClient.performRequest(DELETE,"/"+index, Collections.emptyMap());
-            String result = EntityUtils.toString(response.getEntity(),Constants.UTF_8);
-            logger.info("delete Mapping result: "+result);
+            Response response = restClient.performRequest(DELETE, "/" + index, Collections.emptyMap());
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("delete Mapping result: " + result);
             return EsDealResultUtils.dealResponseResult(result);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (restClient != null) {
                 closeClient(restClient);
             }
@@ -78,6 +80,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
 
     /**
      * 根据mapping设置创建索引
+     *
      * @param index
      * @param json
      * @return
@@ -89,13 +92,13 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
             restClient = restClient();
             index = toLowerCaseIndex(index);
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
-            Response response = restClient.performRequest(PUT,"/"+index, Collections.emptyMap(),entity);
-            String result = EntityUtils.toString(response.getEntity(),Constants.UTF_8);
-            logger.info("create Mapping result: "+result);
+            Response response = restClient.performRequest(PUT, "/" + index, Collections.emptyMap(), entity);
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("create Mapping result: " + result);
             return EsDealResultUtils.dealResponseResult(result);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (restClient != null) {
                 closeClient(restClient);
             }
@@ -105,6 +108,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
 
     /**
      * 单条插入数据
+     *
      * @param index
      * @param type
      * @param json
@@ -117,13 +121,13 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
             restClient = restClient();
             index = toLowerCaseIndex(index);
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
-            Response response = restClient.performRequest(PUT,"/"+index, Collections.emptyMap(),entity);
-            String result = EntityUtils.toString(response.getEntity(),Constants.UTF_8);
-            logger.info("create Mapping result: "+result);
+            Response response = restClient.performRequest(PUT, "/" + index, Collections.emptyMap(), entity);
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("create Mapping result: " + result);
             return 1;
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (restClient != null) {
                 closeClient(restClient);
             }
@@ -133,6 +137,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
 
     /**
      * 批量操作数据
+     *
      * @param index
      * @param type
      * @param json
@@ -144,13 +149,70 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
         try {
             restClient = restClient();
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
-            Response response = restClient.performRequest(POST,"/"+index+"/" +type +"/"+BULK, Collections.emptyMap(),entity);
-            String result = EntityUtils.toString(response.getEntity(),Constants.UTF_8);
-            logger.info("bulkDealData  result: "+result);
+            Response response = restClient.performRequest(POST, "/" + index + "/" + type + "/" + BULK, Collections.emptyMap(), entity);
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("bulkDealData  result: " + result);
             return EsDealResultUtils.dealBulkInsertResult(result);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
+            if (restClient != null) {
+                closeClient(restClient);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String getById(String index, String type, Object id) {
+        RestClient restClient = null;
+        try {
+            restClient = restClient();
+            Response response = restClient.performRequest(GET, endPoint(index,type)+"/"+id, Collections.emptyMap());
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("getById at ES result: " + result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (restClient != null) {
+                closeClient(restClient);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean deleteById(String index, String type, Object id) {
+        RestClient restClient = null;
+        try {
+            restClient = restClient();
+            Response response = restClient.performRequest(DELETE, endPoint(index,type)+"/"+id, Collections.emptyMap());
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("deleteById at ES result: " + result);
+            return EsDealResultUtils.dealDeleteData(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (restClient != null) {
+                closeClient(restClient);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteByQuery(String index, String type, String json) {
+        RestClient restClient = null;
+        try {
+            restClient = restClient();
+            HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
+            Response response = restClient.performRequest(DELETE, endPoint(index,type)+"/"+DELETE_BY_QUERY, Collections.emptyMap(),entity);
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("deleteByQuery at ES result: " + result);
+            return EsDealResultUtils.dealDeleteDataByQuery(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
             if (restClient != null) {
                 closeClient(restClient);
             }
@@ -169,13 +231,13 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
         try {
             restClient = restClient();
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
-            Response response = restClient.performRequest(GET,endpoint, Collections.emptyMap(),entity);
+            Response response = restClient.performRequest(GET, endpoint, Collections.emptyMap(), entity);
             String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
-            logger.info("search at ES result: "+result);
+            logger.info("search at ES result: " + result);
             return EsDealResultUtils.dealSearchItemResult(result);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (restClient != null) {
                 closeClient(restClient);
             }

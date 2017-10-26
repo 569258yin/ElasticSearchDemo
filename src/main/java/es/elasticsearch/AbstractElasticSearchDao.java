@@ -29,6 +29,7 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
 
     public static final String MAPPING = "_mapping";
     public static final String BULK = "_bulk";
+    public static final String DELETE_BY_QUERY = "_delete_by_query";
 
     @Value("${elastic_search_host}")
     private String elasticHost;
@@ -79,6 +80,8 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
         return StringUtils.lowerCase(index);
     }
 
-
+    protected String endPoint(String index, String type) {
+        return "/" + index + "/" + type;
+    }
 
 }

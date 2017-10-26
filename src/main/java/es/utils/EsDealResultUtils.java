@@ -73,4 +73,49 @@ public class EsDealResultUtils {
         }
         return false;
     }
+
+    public static boolean dealDeleteData(String json){
+        if (StringUtils.isEmpty(json)) {
+            return false;
+        }
+        try {
+            Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
+            return "deleted".equalsIgnoreCase((String) maps.get("result"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean dealDeleteDataByQuery(String json){
+        if (StringUtils.isEmpty(json)) {
+            return false;
+        }
+        try {
+            Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
+            return (Integer) maps.get("deleted") > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        String json = "{\n" +
+                "    \"_shards\" : {\n" +
+                "        \"total\" : 2,\n" +
+                "        \"failed\" : 0,\n" +
+                "        \"successful\" : 2\n" +
+                "    },\n" +
+                "    \"found\" : true,\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\",\n" +
+                "    \"_version\" : 2,\n" +
+                "    \"result\": \"deleted\"\n" +
+                "}";
+        Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
+        System.out.println(maps);
+
+    }
 }

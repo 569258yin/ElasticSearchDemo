@@ -15,13 +15,18 @@ public interface ElasticSearchDao {
 
     boolean createIndexMapping(String index,String json);
 
-    //-------------------------------------------------------------Insert,Update,Delete-----------------------------------------
+    boolean createNgramAyanalzer(String index);
+    //-------------------------------------------------------------Insert,Update,Delete,GET-----------------------------------------
 
     int insertData(String index,String type,String json);
 
     boolean bulkDealData(String index, String type, String json);
 
-    boolean createNgramAyanalzer(String index);
+    String getById(String index,String type,Object id);
+
+    boolean deleteById(String index,String type,Object id);
+
+    boolean deleteByQuery(String index,String type,String json);
 
     //-----------------------------------------------------------search-----------------------------------------------------------
     

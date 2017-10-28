@@ -1,5 +1,6 @@
 package elacticsearch.impl;
 
+import es.ElasticApplication;
 import es.dao.ItemDAO;
 import es.elasticsearch.ElasticSearchDao;
 import es.utils.EsJsonUtils;
@@ -9,6 +10,8 @@ import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.runner.RunWith;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -24,7 +27,7 @@ import java.util.List;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/applicationContext.xml"})
+@SpringBootTest(classes = ElasticApplication.class)
 public class ElasticSearchDaoImplTest {
 
     public static final String TENANT_ID = "ca771880-2cd1-4a5d-a53c-581a4721252e";

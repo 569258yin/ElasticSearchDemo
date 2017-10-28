@@ -3,6 +3,7 @@ package es.utils;
 import es.bean.jsonbean.EsItemHits;
 import es.bean.jsonbean.EsSearchResult;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,9 @@ public class EsDealResultUtils {
                 return false;
             }
             Map<String,Object> maps = JsonUtils.jsonDecodeMap(result);
-            String acknow = (String) maps.get("acknowledged");
-            return acknow != null ? acknow.equalsIgnoreCase("true") :false;
+            return  (Boolean) maps.get("acknowledged");
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -87,17 +88,17 @@ public class EsDealResultUtils {
         return false;
     }
 
-    public static boolean dealDeleteDataByQuery(String json){
+    public static int dealDeleteDataByQuery(String json){
         if (StringUtils.isEmpty(json)) {
-            return false;
+            return 0;
         }
         try {
             Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
-            return (Integer) maps.get("deleted") > 0;
+            return (int) maps.get("deleted");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return 0;
     }
 
     public static void main(String[] args) {

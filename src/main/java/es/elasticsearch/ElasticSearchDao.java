@@ -9,11 +9,19 @@ public interface ElasticSearchDao {
 
     //------------------------------------------------------------Index--------------------------------------------------------
 
+    boolean createIndex(String index,String json);
+
     boolean createIndexType(String index,String type,String json);
 
     boolean deleteIndex(String index);
 
     boolean createIndexMapping(String index,String json);
+
+    boolean makeIndexAliases(String alias,String ... indexs);
+
+    List<String> getIndexAllAliases(String index);
+
+    boolean deleteIndexAllAliases(String index);
 
     boolean createNgramAyanalzer(String index);
     //-------------------------------------------------------------Insert,Update,Delete,GET-----------------------------------------
@@ -26,7 +34,7 @@ public interface ElasticSearchDao {
 
     boolean deleteById(String index,String type,Object id);
 
-    boolean deleteByQuery(String index,String type,String json);
+    int deleteByQuery(String index,String type,String json);
 
     //-----------------------------------------------------------search-----------------------------------------------------------
     

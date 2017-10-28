@@ -3,6 +3,7 @@ package es.elasticsearch.impl;
 import es.elasticsearch.AbstractElasticSearchDao;
 import es.utils.Constants;
 import es.utils.EsDealResultUtils;
+import es.utils.EsJsonUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
@@ -25,6 +26,27 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchDaoImpl.class);
 
+    @Override
+    public boolean createIndex(String index, String json) {
+        RestClient restClient = null;
+        try {
+            index = toLowerCaseIndex(index);
+            restClient = restClient();
+            HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
+            Response response = restClient.performRequest(PUT, "/" + index, Collections.emptyMap(), entity);
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("createIndex Mapping result: " + result);
+            return EsDealResultUtils.dealResponseResult(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (restClient != null) {
+                closeClient(restClient);
+            }
+        }
+        return false;
+    }
+
     /**
      * 创建索引和类型
      *
@@ -37,9 +59,10 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
     public boolean createIndexType(String index, String type, String json) {
         RestClient restClient = null;
         try {
+            index = toLowerCaseIndex(index);
             restClient = restClient();
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
-            Response response = restClient.performRequest(PUT, "/" + index + "/" + type, Collections.emptyMap(), entity);
+            Response response = restClient.performRequest(PUT, endPoint(index, type), Collections.emptyMap(), entity);
             String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
             logger.info("delete Mapping result: " + result);
             return EsDealResultUtils.dealResponseResult(result);
@@ -103,6 +126,37 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
                 closeClient(restClient);
             }
         }
+        return false;
+    }
+
+    @Override
+    public boolean makeIndexAliases(String alias, String... indexs) {
+        RestClient restClient = null;
+        try {
+            restClient = restClient();
+            String json = EsJsonUtils.generateAddAliases(alias,indexs);
+            HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
+            Response response = restClient.performRequest(POST, "/" + ALIASES, Collections.emptyMap(), entity);
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("create Mapping result: " + result);
+            return EsDealResultUtils.dealResponseResult(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (restClient != null) {
+                closeClient(restClient);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public List<String> getIndexAllAliases(String index) {
+        return null;
+    }
+
+    @Override
+    public boolean deleteIndexAllAliases(String index) {
         return false;
     }
 
@@ -201,7 +255,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
     }
 
     @Override
-    public boolean deleteByQuery(String index, String type, String json) {
+    public int deleteByQuery(String index, String type, String json) {
         RestClient restClient = null;
         try {
             restClient = restClient();
@@ -217,7 +271,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
                 closeClient(restClient);
             }
         }
-        return false;
+        return 0;
     }
 
     @Override

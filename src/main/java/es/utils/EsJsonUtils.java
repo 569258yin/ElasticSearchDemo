@@ -19,19 +19,28 @@ import java.util.List;
  * Created by kevinyin on 2017/9/9.
  */
 public class EsJsonUtils {
-    private static final Logger logger = LoggerFactory.getLogger(JsonUtils.class);
-    public static ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger logger = LoggerFactory.getLogger(EsJsonUtils.class);
+    public static ObjectMapper objectMapper = JsonUtils.objectMapper;
 
     public static final String NGRAM_ANAYZER = "ngram_analyzer";
     public static final String ITEM_NAME = "itemName";
 
-    static {
-        objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
-        objectMapper.configure(JsonParser.Feature.INTERN_FIELD_NAMES, true);
-//        objectMapper.configure(JsonParser.Feature.CANONICALIZE_FIELD_NAMES, true);
+
+    public static String generateSettingShards(int shards, int replicas){
+        if (shards <= 0) {
+            shards = 5;
+        }
+        if (replicas <= 0) {
+            replicas = 1;
+        }
+        StringBuffer sw = new StringBuffer();
+        sw.append("{");
+            sw.append("\"settings\" : {");
+            sw.append("\"number_of_shards\" : " + shards + ",");
+            sw.append("\"number_of_replicas\" : " + replicas );
+            sw.append("}");
+        sw.append("}");
+        return sw.toString();
     }
 
     public static String generateItemMapping() {
@@ -244,4 +253,10 @@ public class EsJsonUtils {
     }
 
 
+    public static String generateAddAliases(String alias, String[] indexs) {
+        if (indexs.length == 0) {
+            return "";
+        }
+        return "";
+    }
 }

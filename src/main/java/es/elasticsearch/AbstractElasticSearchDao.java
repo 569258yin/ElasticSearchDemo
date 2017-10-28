@@ -26,10 +26,13 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
     public static final String POST = "POST";
     public static final String PUT = "PUT";
     public static final String DELETE = "DELETE";
+    public static final String HEAD = "HEAD";
 
     public static final String MAPPING = "_mapping";
     public static final String BULK = "_bulk";
     public static final String DELETE_BY_QUERY = "_delete_by_query";
+    public static final String ALIASES = "_aliases";
+    public static final String ALIAS = "_alias";
 
     @Value("${elastic_search_host}")
     private String elasticHost;

@@ -28,5 +28,12 @@ public class TestGeneratoJson {
         System.out.println(maps.size());
     }
 
+    @Test
+    public void generateAddAliasesTest(){
+        String[] tests = new String[]{"test1","test2","test3"};
+        String json = EsJsonUtils.generateAddAliases("test",tests);
+        System.out.println(json);
+    }
+
 
 }

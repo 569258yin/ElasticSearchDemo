@@ -257,6 +257,34 @@ public class EsJsonUtils {
         if (indexs.length == 0) {
             return "";
         }
-        return "";
+        StringWriter sw = new StringWriter();
+        JsonFactory jsonFactory = objectMapper.getJsonFactory();
+        JsonGenerator jg = null;
+        try {
+            jg = jsonFactory.createJsonGenerator(sw);
+            jg.writeStartObject();
+            jg.writeFieldName("actions");
+            jg.writeStartArray();
+            jg.writeStartObject();
+            jg.writeFieldName("add");
+            jg.writeStartObject();
+            jg.writeFieldName("indices");
+            jg.writeStartArray();
+            for (int i = 0; i < indexs.length; i++) {
+                jg.writeObject(indexs[i]);
+            }
+            jg.writeEndArray();
+            jg.writeStringField("alias",alias);
+            jg.writeEndObject();
+            jg.writeEndObject();
+            jg.writeEndArray();
+            jg.writeEndObject();
+        } catch (IOException e) {
+            logger.warn(e.getMessage(), e);
+        } finally {
+            Closer.close(jg);
+        }
+        logger.info("generateQueryItemByNameAndValue:" + sw.toString());
+        return sw.toString();
     }
 }

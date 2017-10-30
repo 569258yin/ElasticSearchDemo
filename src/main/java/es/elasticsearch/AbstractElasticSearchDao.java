@@ -87,4 +87,5 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
         return "/" + index + "/" + type;
     }
 
+
 }

@@ -2,6 +2,7 @@ package es.utils;
 
 import es.bean.jsonbean.EsItemHits;
 import es.bean.jsonbean.EsSearchResult;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by kevinyin on 2017/9/11.
@@ -30,11 +32,15 @@ public class EsDealResultUtils {
                 return false;
             }
             Map<String,Object> maps = JsonUtils.jsonDecodeMap(result);
+            Object acknowledged =  maps.get("acknowledged");
+            if (acknowledged == null) {
+                return false;
+            }
             return  (Boolean) maps.get("acknowledged");
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     public static List<String> dealSearchItemResult(String json){
@@ -68,6 +74,10 @@ public class EsDealResultUtils {
         }
         try {
             Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
+            Object errors =  maps.get("errors");
+            if (errors == null) {
+                return false;
+            }
             return (Boolean) maps.get("errors");
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,6 +91,10 @@ public class EsDealResultUtils {
         }
         try {
             Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
+            Object result =  maps.get("result");
+            if (result == null) {
+                return false;
+            }
             return "deleted".equalsIgnoreCase((String) maps.get("result"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,6 +108,10 @@ public class EsDealResultUtils {
         }
         try {
             Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
+            Object deleted =  maps.get("deleted");
+            if (deleted == null) {
+                return 0;
+            }
             return (int) maps.get("deleted");
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,22 +119,30 @@ public class EsDealResultUtils {
         return 0;
     }
 
+    public static List<String> dealGetAliasesResult(String json) {
+        if (StringUtils.isEmpty(json)) {
+            return Collections.emptyList();
+        }
+        try {
+            Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
+            if (MapUtils.isNotEmpty(maps)) {
+                return maps.keySet().stream().collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
+
     public static void main(String[] args) {
         String json = "{\n" +
-                "    \"_shards\" : {\n" +
-                "        \"total\" : 2,\n" +
-                "        \"failed\" : 0,\n" +
-                "        \"successful\" : 2\n" +
-                "    },\n" +
-                "    \"found\" : true,\n" +
-                "    \"_index\" : \"twitter\",\n" +
-                "    \"_type\" : \"tweet\",\n" +
-                "    \"_id\" : \"1\",\n" +
-                "    \"_version\" : 2,\n" +
-                "    \"result\": \"deleted\"\n" +
+                "  \"test_2\": {\n" +
+                "    \"aliases\": {\n" +
+                "      \"test\": {}\n" +
+                "    }\n" +
+                "  }\n" +
                 "}";
-        Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
-        System.out.println(maps);
+        System.out.println(dealGetAliasesResult(json));
 
     }
 }

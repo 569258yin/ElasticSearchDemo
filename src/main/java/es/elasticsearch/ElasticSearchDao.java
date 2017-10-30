@@ -15,6 +15,10 @@ public interface ElasticSearchDao {
 
     boolean deleteIndex(String index);
 
+    boolean existIndex(String index);
+
+    boolean checkExistIndex(String[] indexs);
+
     boolean createIndexMapping(String index,String json);
 
     boolean makeIndexAliases(String alias,String ... indexs);

@@ -4,6 +4,7 @@ import es.elasticsearch.AbstractElasticSearchDao;
 import es.utils.Constants;
 import es.utils.EsDealResultUtils;
 import es.utils.EsJsonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
@@ -89,6 +90,9 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
             restClient = restClient();
             Response response = restClient.performRequest(DELETE, "/" + index, Collections.emptyMap());
             String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            if (StringUtils.isEmpty(result)) {
+                return false;
+            }
             logger.info("delete Mapping result: " + result);
             return EsDealResultUtils.dealResponseResult(result);
         } catch (IOException e) {
@@ -99,6 +103,53 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
             }
         }
         return false;
+    }
+
+    /**
+     * 索引是否存在
+     * @param index
+     * @return
+     */
+    @Override
+    public boolean existIndex(String index) {
+        RestClient restClient = null;
+        try {
+            restClient = restClient();
+            Response response = restClient.performRequest(HEAD, "/" + index, Collections.emptyMap());
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            if (StringUtils.isEmpty(result)) {
+                return false;
+            }
+            logger.info("existIndex result: " + result);
+            return result.startsWith("200");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (restClient != null) {
+                closeClient(restClient);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检查所有的索引是否都存在
+     * @param indexs
+     * @return  当全部存在才返回 true，否则返回false
+     */
+    @Override
+    public boolean checkExistIndex(String [] indexs){
+        if (indexs == null || indexs.length == 0) {
+            return false;
+        }
+        for (int i = 0; i < indexs.length; i++) {
+            if (existIndex(indexs[i])) {
+                continue;
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -131,6 +182,9 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
 
     @Override
     public boolean makeIndexAliases(String alias, String... indexs) {
+        if (!checkExistIndex(indexs)) {
+            return false;
+        }
         RestClient restClient = null;
         try {
             restClient = restClient();
@@ -150,13 +204,52 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
         return false;
     }
 
+    /**
+     * 得到以次索引为别名的所有索引
+     * @param index
+     * @return 如果index不存在，返回null
+     */
     @Override
     public List<String> getIndexAllAliases(String index) {
-        return null;
+        if (!existIndex(index)) {
+            return null;
+        }
+        RestClient restClient = null;
+        try {
+            restClient = restClient();
+            Response response = restClient.performRequest(GET, "/"+ index + "/" + ALIAS, Collections.emptyMap());
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("create Mapping result: " + result);
+            return EsDealResultUtils.dealGetAliasesResult(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (restClient != null) {
+                closeClient(restClient);
+            }
+        }
+        return Collections.emptyList();
     }
 
     @Override
     public boolean deleteIndexAllAliases(String index) {
+        if (!existIndex(index)) {
+            return true;
+        }
+        RestClient restClient = null;
+        try {
+            restClient = restClient();
+            Response response = restClient.performRequest(DELETE, "/"+ index + "/" + ALIAS + "/*", Collections.emptyMap());
+            String result = EntityUtils.toString(response.getEntity(), Constants.UTF_8);
+            logger.info("create Mapping result: " + result);
+            return EsDealResultUtils.dealResponseResult(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (restClient != null) {
+                closeClient(restClient);
+            }
+        }
         return false;
     }
 

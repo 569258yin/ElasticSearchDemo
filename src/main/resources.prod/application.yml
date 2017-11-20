@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: coreplus_core
+  session:
+    store-type: redis
+server:
+  session:
+    timeout: 4320

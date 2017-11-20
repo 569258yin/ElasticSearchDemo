@@ -20,19 +20,10 @@ import java.util.List;
  */
 public class EsJsonUtils {
     private static final Logger logger = LoggerFactory.getLogger(JsonUtils.class);
-    public static ObjectMapper objectMapper = new ObjectMapper();
+    public static ObjectMapper objectMapper = JsonUtils.objectMapper;
 
     public static final String NGRAM_ANAYZER = "ngram_analyzer";
     public static final String ITEM_NAME = "itemName";
-
-    static {
-        objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
-        objectMapper.configure(JsonParser.Feature.INTERN_FIELD_NAMES, true);
-//        objectMapper.configure(JsonParser.Feature.CANONICALIZE_FIELD_NAMES, true);
-    }
 
     public static String generateItemMapping() {
         StringBuffer sw = new StringBuffer();
@@ -181,7 +172,8 @@ public class EsJsonUtils {
             jg.writeFieldName("must");
             jg.writeStartArray();
             jg.writeStartObject();
-            jg.writeFieldName("match_phrase");  //,"{\"attribute.name\":\""+name+"\"}"
+            //"{\"attribute.name\":\""+name+"\"}"
+            jg.writeFieldName("match_phrase");
             jg.writeStartObject();
             jg.writeStringField("attribute.name", name);
             jg.writeEndObject();

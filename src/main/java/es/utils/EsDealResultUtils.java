@@ -18,7 +18,7 @@ import java.util.Map;
 public class EsDealResultUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(EsDealResultUtils.class);
-    public static ObjectMapper objectMapper = new ObjectMapper();
+    public static ObjectMapper objectMapper = JsonUtils.objectMapper;
 
     public static boolean dealResponseResult(String result){
         if (result == null) {

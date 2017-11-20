@@ -1,7 +1,7 @@
 package es.service.impl;
 
 import es.bean.es.EsSearchRange;
-import es.dao.ItemDAO;
+import es.dao.ItemDao;
 import es.elasticsearch.ElasticSearchDao;
 import es.bean.item.Item;
 import es.service.ItemSearchService;
@@ -25,7 +25,7 @@ public class ItemSearchServiceImpl implements ItemSearchService{
     @Resource
     private ElasticSearchDao elasticSearchDao;
     @Resource
-    private ItemDAO itemDAO;
+    private ItemDao itemDao;
 
     // 1823 ms   不用线程只需要856ms   其中搜索274ms
     @Override
@@ -38,7 +38,7 @@ public class ItemSearchServiceImpl implements ItemSearchService{
         List<String> ids = elasticSearchDao.search("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
         logger.info("search By ES use Time :" +(System.currentTimeMillis() - startTime) +"ms");
         if (CollectionUtils.isNotEmpty(ids)) {
-            return itemDAO.getItemsByIds(ids,false);
+            return itemDao.getItemsByIds(ids,false);
         }
         return Collections.EMPTY_LIST;
     }
@@ -53,7 +53,7 @@ public class ItemSearchServiceImpl implements ItemSearchService{
         List<String> ids = elasticSearchDao.search("/"+tenantId+ Constants.AFTER_SEARCH_ITEM,json);
         logger.info("search By ES use Time :" +(System.currentTimeMillis() - startTime) +"ms");
         if (CollectionUtils.isNotEmpty(ids)) {
-            return itemDAO.getItemsByIds(ids,false);
+            return itemDao.getItemsByIds(ids,false);
         }
         return Collections.EMPTY_LIST;
     }

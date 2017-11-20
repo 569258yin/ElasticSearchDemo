@@ -1,6 +1,7 @@
 package elacticsearch.impl;
 
-import es.dao.ItemDAO;
+import es.ElasticApplication;
+import es.dao.ItemDao;
 import es.elasticsearch.ElasticSearchDao;
 import es.utils.EsJsonUtils;
 import es.bean.item.Item;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -24,14 +26,14 @@ import java.util.List;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/applicationContext.xml"})
+@SpringBootTest(classes = ElasticApplication.class)
 public class ElasticSearchDaoImplTest {
 
     public static final String TENANT_ID = "ca771880-2cd1-4a5d-a53c-581a4721252e";
     @Resource
     private ElasticSearchDao elasticSearchDao;
     @Resource
-    private ItemDAO itemDAO;
+    private ItemDao itemDao;
 
 
 
@@ -80,7 +82,7 @@ public class ElasticSearchDaoImplTest {
     @Test
     public void testMultiInsertData() throws Exception {
         String tenantId = "5cab9a0c-b22e-4640-ac7e-7426dd9fea73";
-        List<Item> items = itemDAO.getAllNotDeleteItems(tenantId);
+        List<Item> items = itemDao.getAllNotDeleteItems(tenantId);
         System.out.println(items.size());
         int pointsDataLimit = 1000;//限制条数
         int size = items.size();

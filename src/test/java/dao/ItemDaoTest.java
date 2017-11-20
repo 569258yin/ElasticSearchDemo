@@ -1,16 +1,13 @@
 package dao;
 
 import es.ElasticApplication;
-import es.dao.ItemDAO;
-import es.elasticsearch.ElasticSearchDao;
+import es.dao.ItemDao;
 import es.utils.EsJsonUtils;
 import es.bean.item.Item;
 import es.utils.ObjectUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
@@ -27,12 +24,12 @@ public class ItemDaoTest {
 
 
     @Resource
-    private ItemDAO itemDAO;
+    private ItemDao itemDao;
 
     @Test
     public void testFetchAllItem() {
         String tenantId = "5cab9a0c-b22e-4640-ac7e-7426dd9fea73";
-        List<Item> items = itemDAO.getAllNotDeleteItems(tenantId);
+        List<Item> items = itemDao.getAllNotDeleteItems(tenantId);
         System.out.println(items.size());
         int pointsDataLimit = 1000;//限制条数
         int size = items.size();
@@ -58,7 +55,7 @@ public class ItemDaoTest {
     @Test
     public void testItemToMap(){
         String tenantId = "5cab9a0c-b22e-4640-ac7e-7426dd9fea73";
-        List<Item> items = itemDAO.getAllNotDeleteItems(tenantId);
+        List<Item> items = itemDao.getAllNotDeleteItems(tenantId);
         Map<String,Map<String,Object>> itemMaps = new HashMap<>(items.size());
         for (Item item : items) {
             Map<String, Object> obj = ObjectUtils.getValueMap(item);
@@ -70,7 +67,7 @@ public class ItemDaoTest {
     @Test
     public void testGenerateItemJson(){
         String tenantId = "5cab9a0c-b22e-4640-ac7e-7426dd9fea73";
-        List<Item> items = itemDAO.getAllNotDeleteItems(tenantId);
+        List<Item> items = itemDao.getAllNotDeleteItems(tenantId);
        String json =EsJsonUtils.generateMultiInsertItem(items.subList(0,20));
         System.out.println(json);
     }

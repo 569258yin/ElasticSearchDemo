@@ -34,12 +34,16 @@ public abstract class AbstractElasticSearchDao implements ElasticSearchDao {
     private String elasticHost;
     @Value("${elastic_search_port}")
     private int elasticPort;
+    @Value("${elastic_username}")
+    private String userName;
+    @Value("${elastic_password}")
+    private String password;
 
     protected RestClient restClient(){
 
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials("elastic", "123456"));
+                new UsernamePasswordCredentials(userName, password));
 
         return  RestClient.builder(
                 new HttpHost(elasticHost,elasticPort,"http")

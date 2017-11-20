@@ -10,7 +10,7 @@ import java.util.List;
  * Created by cao on 3/24/16.
  */
 @Repository("categoryDAO")
-public interface CategoryDAO {
+public interface CategoryDao {
     List<Category> getCategoriesByTenantId(@Param("tenantId") String tenantId, @Param("withDeleted") boolean withDeleted);
 
     Category getCategoryById(@Param("id") String id);

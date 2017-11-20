@@ -7,7 +7,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-@MapperScan("es.dao")
 public class ElasticApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by cao on 3/24/16.
  */
 @Repository("itemDAO")
-public interface ItemDAO {
+public interface ItemDao {
 
     Item getItem(@Param("itemId") String itemId, @Param("tenantId") String tenantId, @Param("withDeleted") boolean withDeleted);
 

@@ -23,10 +23,13 @@ public class ClientUtils {
     public static final String PUT = "PUT";
 
 
+    private static String host = "";
+    private static int port = 9200;
+
+
     public static RestClient restClient(){
         return  RestClient.builder(
-                new HttpHost("localhost",9200,"http"),
-                new HttpHost("localhost",9201,"http")
+                new HttpHost(host,port,"http")
         )
                 .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
                     public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {

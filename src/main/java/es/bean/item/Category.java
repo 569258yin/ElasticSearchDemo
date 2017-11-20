@@ -21,6 +21,12 @@ public class Category implements Serializable {
         this.id = id;
     }
 
+    public static Category factoryByName(String name){
+        Category category = new Category();
+        category.setName(name);
+        return category;
+    }
+
     public boolean isDeleted() {
         return isDeleted;
     }

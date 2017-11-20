@@ -1,7 +1,13 @@
 package es.utils;
 
+import es.bean.item.Item;
+import es.bean.item.ItemAttribute;
+import es.bean.jsonbean.EsItem;
+import es.bean.jsonbean.EsItemAttribute;
 import es.bean.jsonbean.EsItemHits;
 import es.bean.jsonbean.EsSearchResult;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -36,29 +42,19 @@ public class EsDealResultUtils {
         }
     }
 
-    public static List<String> dealSearchItemResult(String json){
+    public static Map<String,Object> dealSearchItemResult(String json){
         if (StringUtils.isEmpty(json)) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyMap();
         }
         try {
-            EsSearchResult searchResult = objectMapper.readValue(json, EsSearchResult.class);
-            if (searchResult != null) {
-                int total = searchResult.getHits().getTotal();
-                if (total == 0) {
-                    return Collections.EMPTY_LIST;
-                }
-                List<EsItemHits> esItems = searchResult.getHits().getHits();
-                List<String> ids = new ArrayList<>(total);
-                for (int i = 0; i < esItems.size(); i++) {
-                    ids.add(esItems.get(i).get_source().getId());
-                }
-                return ids;
+            Map<String,Object> maps = JsonUtils.jsonDecodeMap(json);
+            if (MapUtils.isNotEmpty(maps)) {
+                return (Map<String, Object>) maps.get("hits");
             }
-            return Collections.EMPTY_LIST;
         } catch (Exception e) {
             logger.error("dealSearchItemResult",e);
-            return Collections.EMPTY_LIST;
         }
+        return Collections.emptyMap();
     }
 
     public static boolean dealBulkInsertResult(String json) {

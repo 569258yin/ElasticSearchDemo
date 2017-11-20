@@ -1,6 +1,7 @@
 package es.elasticsearch;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kevinyin on 2017/9/9.
@@ -25,6 +26,6 @@ public interface ElasticSearchDao {
 
     //-----------------------------------------------------------search-----------------------------------------------------------
     
-    List<String> search(String endpoint, String json);
+    Map<String,Object> search(String endpoint, String json);
 
 }

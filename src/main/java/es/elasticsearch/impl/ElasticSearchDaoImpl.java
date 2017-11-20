@@ -1,5 +1,6 @@
 package es.elasticsearch.impl;
 
+import es.bean.item.Item;
 import es.elasticsearch.AbstractElasticSearchDao;
 import es.utils.Constants;
 import es.utils.EsDealResultUtils;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kevinyin on 2017/9/9.
@@ -164,7 +166,7 @@ public class ElasticSearchDaoImpl extends AbstractElasticSearchDao {
     }
 
     @Override
-    public List<String> search(String endpoint, String json) {
+    public Map<String,Object> search(String endpoint, String json) {
         RestClient restClient = null;
         try {
             restClient = restClient();

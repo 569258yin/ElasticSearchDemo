@@ -17,6 +17,8 @@ public class ItemAttribute implements Serializable {
     private String value;
     private String tenantId;
 
+
+
     public ItemAttribute() {}
 
     public ItemAttribute(String itemId,String name, String value){
